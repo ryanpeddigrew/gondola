@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Chalet by Chairlift — Social Operations &amp; Approvals</title>
+
+  <!-- Mobile Web App Meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Chalet" />
+  <meta name="theme-color" content="#FAF9F6" />
+
+  <!-- Inline Straight-On Alpine Chalet SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23FAF9F6'/%3E%3Cpath d='M16 31V54H48V31L32 14L16 31Z' fill='%230F172A'/%3E%3Crect x='20' y='42' width='6' height='10' rx='1.5' fill='%23FFFFFF'/%3E%3Crect x='29' y='36' width='6' height='16' rx='1.5' fill='%23CBD5E1'/%3E%3Crect x='38' y='15' width='6' height='37' rx='1.5' fill='%232ED3A8'/%3E%3Cpath d='M9 34L32 11L55 34' fill='none' stroke='%230F172A' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='36' y='12.5' width='10' height='3' rx='1.2' fill='%230F172A'/%3E%3C/svg%3E" />
+
+  <!-- Typography: Plus Jakarta Sans (Primary UI) & JetBrains Mono (Timestamps / Counters Only) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FAF9F6',
+            ink: '#0F172A',
+            mint: '#2ED3A8',
+            mintDark: '#1EB990'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #FAF9F6;
+      color: #0F172A;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Hide scrollbars on horizontal filter pills */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Smooth Slide-Over Drawer Animation */
+    .drawer-panel {
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .drawer-open .drawer-panel {
+      transform: translateX(0);
+    }
+    .drawer-backdrop {
+      opacity: 0;
+      transition: opacity 0.24s ease;
+    }
+    .drawer-open .drawer-backdrop {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FAF9F6] text-[#0F172A] overflow-x-hidden pb-20 lg:pb-0">
+
+  <!-- ===================================================================== -->
+  <!-- 1. LIGHT-MODE ROLE SWITCHER / SIGN-IN SCREEN                          -->
+  <!-- ===================================================================== -->
+  <div id="auth-screen" class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 relative bg-[#FAF9F6]">
+    <!-- Soft ambient mint glow -->
+    <div class="pointer-events-none fixed inset-0 overflow-hidden">
+      <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[540px] h-[260px] rounded-full bg-[#2ED3A8]/15 blur-3xl"></div>
+    </div>
+
+    <div class="w-full max-w-md relative z-10">
+      <!-- Straight-On Alpine A-Frame Chalet Brand Lockup -->
+      <div class="flex flex-col items-center text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-center mb-4">
+          <svg width="44" height="44" viewBox="0 0 64 64" fill="none" aria-label="Chalet by Chairlift Logo">
+            <line x1="8" y1="54" x2="56" y2="54" stroke="#0F172A" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M16 31V54H48V31L32 14L16 31Z" fill="#0F172A"/>
+            <!-- 3 Ascending Chairlift Bars -->
+            <rect x="20" y="42" width="6" height="10" rx="1.5" fill="#FFFFFF"/>
+            <rect x="29" y="36" width="6" height="16" rx="1.5" fill="#CBD5E1"/>
+            <!-- 3rd Mint Bar extending through right roof slope to form Chimney -->
+            <rect x="38" y="15" width="6" height="37" rx="1.5" fill="#2ED3A8"/>
+            <!-- Symmetrical Straight-On Alpine Overhanging Roof -->
+            <path d="M9 34L32 11L55 34" stroke="#0F172A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 33.5L32 14.5L51 33.5" stroke="#FAF9F6" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+            <!-- Chimney Cap -->
+            <rect x="36" y="12.5" width="10" height="3" rx="1.2" fill="#0F172A"/>
+          </svg>
+        </div>
+        <h1 class="font-extrabold text-3xl tracking-tight text-[#0F172A] leading-none">Chalet</h1>
+        <span class="text-[11px] font-semibold tracking-[0.2em] uppercase text-slate-500 mt-1.5">by Chairlift</span>
+        <p class="text-sm text-slate-600 mt-3 max-w-xs leading-relaxed">Multi-client social media operations, raw asset intake, and one-click approval workflows.</p>
+      </div>
+
+      <!-- Sign-In Card -->
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 shadow-sm">
+        <div class="mb-6">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">1-Click Role Sign In</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Emilie Card -->
+            <button type="button" id="quick-login-emilie" class="group text-left p-4 rounded-xl bg-[#FAF9F6] hover:bg-emerald-50/60 border border-slate-200 hover:border-[#2ED3A8] transition-all">
+              <div class="flex items-center justify-between mb-2.5">
+                <div class="w-9 h-9 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">E</div>
+                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-200/70 text-slate-700">Coordinator</span>
+              </div>
+              <div class="font-bold text-sm text-[#0F172A] group-hover:text-emerald-700 transition-colors">Emilie</div>
+              <div class="text-xs text-slate-500 truncate mt-0.5">Intake, Drafts &amp; Queue</div>
+            </button>
+
+            <!-- Ryan Card -->
+            <button type="button" id="quick-login-ryan" class="group text-left p-4 rounded-xl bg-[#FAF9F6] hover:bg-emerald-50/60 border border-slate-200 hover:border-[#2ED3A8] transition-all">
+              <div class="flex items-center justify-between mb-2.5">
+                <div class="w-9 h-9 rounded-full bg-[#2ED3A8] text-[#0F172A] font-bold text-xs flex items-center justify-center">R</div>
+                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#2ED3A8]/20 text-emerald-900">Approver</span>
+              </div>
+              <div class="font-bold text-sm text-[#0F172A] group-hover:text-emerald-700 transition-colors">Ryan</div>
+              <div class="text-xs text-slate-500 truncate mt-0.5">Approvals, Clients &amp; Sync</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="relative flex items-center my-5">
+          <div class="flex-grow border-t border-slate-200"></div>
+          <span class="px-3 text-[11px] font-medium uppercase tracking-wider text-slate-400">Or sign in with PIN</span>
+          <div class="flex-grow border-t border-slate-200"></div>
+        </div>
+
+        <!-- Optional PIN Form -->
+        <form id="login-form" class="space-y-3.5">
+          <div>
+            <label for="login-email" class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+            <input id="login-email" type="email" required placeholder="name@usechairlift.com" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8] focus:bg-white transition-colors" />
+          </div>
+          <div>
+            <label for="login-pin" class="block text-xs font-semibold text-slate-700 mb-1">Access PIN</label>
+            <input id="login-pin" type="password" inputmode="numeric" maxlength="6" required placeholder="••••" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 font-mono text-sm tracking-widest text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8] focus:bg-white transition-colors" />
+          </div>
+          <div id="login-error" class="hidden text-xs font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2"></div>
+          <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white font-semibold text-sm transition-colors shadow-sm">
+            Sign In to Chalet
+          </button>
+        </form>
+      </div>
+
+      <p class="text-center mt-4 text-xs text-slate-500">
+        Optional PINs — Emilie: <span class="font-mono font-semibold text-slate-700">1234</span> · Ryan: <span class="font-mono font-semibold text-slate-700">2026</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. MAIN LIGHT-MODE APPLICATION SHELL                                  -->
+  <!-- ===================================================================== -->
+  <div id="app-shell" class="hidden min-h-screen flex">
+
+    <!-- Mobile Slide-Out Sidebar Backdrop -->
+    <div id="mobile-sidebar-backdrop" class="hidden fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-xs lg:hidden"></div>
+
+    <!-- =================================================================== -->
+    <!-- LEFT SIDEBAR (Desktop Fixed + Mobile Drawer)                        -->
+    <!-- =================================================================== -->
+    <aside id="app-sidebar" class="fixed lg:sticky top-0 left-0 z-50 h-screen w-64 bg-white border-r border-slate-200/90 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-200">
+      <!-- Permanent Straight-On Alpine Chalet Logo Lockup -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#FAF9F6] border border-slate-200/90 flex items-center justify-center shrink-0">
+            <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <line x1="8" y1="54" x2="56" y2="54" stroke="#0F172A" stroke-width="3.4" stroke-linecap="round"/>
+              <path d="M16 31V54H48V31L32 14L16 31Z" fill="#0F172A"/>
+              <rect x="20" y="42" width="6" height="10" rx="1.5" fill="#FFFFFF"/>
+              <rect x="29" y="36" width="6" height="16" rx="1.5" fill="#CBD5E1"/>
+              <rect x="38" y="15" width="6" height="37" rx="1.5" fill="#2ED3A8"/>
+              <path d="M9 34L32 11L55 34" stroke="#0F172A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13 33.5L32 14.5L51 33.5" stroke="#FAF9F6" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+              <rect x="36" y="12.5" width="10" height="3" rx="1.2" fill="#0F172A"/>
+            </svg>
+          </div>
+          <div class="flex flex-col leading-none">
+            <span class="font-extrabold text-xl tracking-tight text-[#0F172A]">Chalet</span>
+            <span class="text-[10px] font-semibold tracking-[0.16em] uppercase text-slate-500 mt-0.5">by Chairlift</span>
+          </div>
+        </div>
+        <button id="close-mobile-sidebar" type="button" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-[#0F172A] hover:bg-slate-100" aria-label="Close Menu">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Client Workspace Switcher -->
+      <div class="px-4 pt-4 pb-2">
+        <div class="flex items-center justify-between mb-1.5 px-1">
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Client Workspace</span>
+          <button id="sidebar-add-client-btn" type="button" class="hidden text-xs font-semibold text-emerald-700 hover:text-emerald-800">+ Add</button>
+        </div>
+        <select id="workspace-selector" class="w-full px-3 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#2ED3A8] transition-colors cursor-pointer"></select>
+      </div>
+
+      <!-- Primary Navigation -->
+      <nav class="flex-1 px-3 py-3 space-y-1 overflow-y-auto no-scrollbar" id="sidebar-nav">
+        <button data-nav="queue" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+          <span class="flex items-center gap-3">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span>Content Queue</span>
+          </span>
+        </button>
+
+        <!-- Approvals (Ryan Only) -->
+        <button id="nav-approvals" data-nav="approvals" class="nav-item hidden w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+          <span class="flex items-center gap-3">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            <span>Approvals</span>
+          </span>
+          <span id="sidebar-approval-badge" class="font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#2ED3A8] text-[#0F172A]">0</span>
+        </button>
+
+        <button data-nav="schedule" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+          <span class="flex items-center gap-3">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>7-Day Schedule</span>
+          </span>
+        </button>
+
+        <button data-nav="intake" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+          <span class="flex items-center gap-3">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Raw Asset Intake</span>
+          </span>
+          <span id="sidebar-intake-badge" class="font-mono text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">0</span>
+        </button>
+
+        <button data-nav="channels" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+          <span class="flex items-center gap-3">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            <span>Channels &amp; Studios</span>
+          </span>
+        </button>
+
+        <!-- Live Sync & Automation (Ryan Only) -->
+        <button id="nav-sync" data-nav="sync" class="nav-item hidden w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+          <span class="flex items-center gap-3">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            <span>Live Sync &amp; Drive</span>
+          </span>
+        </button>
+      </nav>
+
+      <!-- Active Role Switcher Footer -->
+      <div class="p-4 border-t border-slate-100 bg-[#FAF9F6]/70">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div id="user-avatar" class="w-9 h-9 rounded-full bg-[#2ED3A8] text-[#0F172A] font-bold text-xs flex items-center justify-center shrink-0">R</div>
+            <div class="min-w-0">
+              <div id="user-display-name" class="text-sm font-bold text-[#0F172A] truncate">Ryan</div>
+              <div id="user-role-label" class="text-xs text-slate-500 truncate">Approver / Manager</div>
+            </div>
+          </div>
+          <button id="logout-btn" type="button" title="Switch Role / Sign Out" class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-600 hover:text-[#0F172A] hover:border-slate-300 transition-colors shrink-0">
+            Switch
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- =================================================================== -->
+    <!-- MAIN WORKSPACE COLUMN                                               -->
+    <!-- =================================================================== -->
+    <div class="flex-1 flex flex-col min-w-0">
+
+      <!-- Sticky Top Header (Mobile + Desktop — Chalet Logo NEVER Truncates) -->
+      <header class="sticky top-0 z-30 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-slate-200/80 px-3.5 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-2">
+        <!-- Left: Mobile Menu + Permanent Chalet Logo Lockup (Mobile) / View Title (Desktop) -->
+        <div class="flex items-center gap-2.5 min-w-0">
+          <button id="open-mobile-sidebar" type="button" class="lg:hidden p-2 rounded-xl bg-white border border-slate-200/90 text-[#0F172A] hover:bg-slate-50 shrink-0" aria-label="Open Navigation">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+
+          <!-- Permanent Mobile Brand Lockup (Always visible on mobile & tablet, never truncated) -->
+          <div class="flex lg:hidden items-center gap-2 shrink-0">
+            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200/90 flex items-center justify-center shrink-0 shadow-2xs">
+              <svg width="22" height="22" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <line x1="8" y1="54" x2="56" y2="54" stroke="#0F172A" stroke-width="3.6" stroke-linecap="round"/>
+                <path d="M16 31V54H48V31L32 14L16 31Z" fill="#0F172A"/>
+                <rect x="20" y="42" width="6" height="10" rx="1.5" fill="#FFFFFF"/>
+                <rect x="29" y="36" width="6" height="16" rx="1.5" fill="#CBD5E1"/>
+                <rect x="38" y="15" width="6" height="37" rx="1.5" fill="#2ED3A8"/>
+                <path d="M9 34L32 11L55 34" stroke="#0F172A" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13 33.5L32 14.5L51 33.5" stroke="#FAF9F6" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+                <rect x="36" y="12.5" width="10" height="3" rx="1.2" fill="#0F172A"/>
+              </svg>
+            </div>
+            <div class="flex flex-col leading-none">
+              <span class="font-extrabold text-base tracking-tight text-[#0F172A]">Chalet</span>
+              <span class="text-[9px] font-semibold tracking-[0.14em] uppercase text-slate-500 mt-0.5">by Chairlift</span>
+            </div>
+          </div>
+
+          <!-- Desktop Page Heading -->
+          <div class="hidden lg:block min-w-0">
+            <h2 id="page-title" class="font-bold text-xl tracking-tight text-[#0F172A] truncate">Content Queue</h2>
+            <p id="page-subtitle" class="text-xs text-slate-500 truncate">Visual queue, approvals, and multi-client publishing</p>
+          </div>
+        </div>
+
+        <!-- Right: Sync Status Pill, Pending Approvals Pill, Bell, and + New Post -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Sync Mode Pill (Desktop) -->
+          <button id="sync-status-pill" type="button" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-medium text-slate-600 hover:border-slate-300 transition-colors">
+            <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+            <span id="sync-status-text">Local Mode</span>
+          </button>
+
+          <!-- Ryan Pending Approvals Quick Pill -->
+          <button id="topbar-approvals-pill" type="button" class="hidden items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#2ED3A8]/20 border border-[#2ED3A8]/50 text-[#0F172A] hover:bg-[#2ED3A8]/30 transition-colors">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+            <span class="text-xs font-bold"><span id="topbar-approval-count" class="font-mono">0</span> <span class="hidden sm:inline">Pending</span></span>
+          </button>
+
+          <!-- Notification Bell -->
+          <div class="relative">
+            <button id="bell-btn" type="button" class="relative p-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 transition-colors" aria-label="Notifications">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              <span id="bell-dot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#2ED3A8] ring-2 ring-white"></span>
+            </button>
+
+            <!-- Notification Dropdown -->
+            <div id="bell-dropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white border border-slate-200 shadow-xl overflow-hidden z-50">
+              <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                <span class="font-bold text-sm text-[#0F172A]">Notifications</span>
+                <button id="mark-all-read-btn" type="button" class="text-xs font-semibold text-emerald-700 hover:underline">Mark all read</button>
+              </div>
+              <div id="bell-list" class="max-h-80 overflow-y-auto divide-y divide-slate-100"></div>
+            </div>
+          </div>
+
+          <!-- Primary + New Post Button -->
+          <button id="open-composer-btn" type="button" class="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl bg-[#2ED3A8] hover:bg-[#24c298] text-[#0F172A] font-bold text-xs sm:text-sm transition-colors shadow-2xs">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>New Post</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Mobile Workspace Selector Bar (< lg) -->
+      <div class="lg:hidden px-3.5 py-2.5 bg-white border-b border-slate-200/70 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 flex-1 min-w-0">
+          <span class="text-xs font-semibold text-slate-400 shrink-0">Client:</span>
+          <select id="mobile-workspace-selector" class="flex-1 min-w-0 px-2.5 py-1.5 rounded-lg bg-[#FAF9F6] border border-slate-200 text-xs font-bold text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]"></select>
+        </div>
+        <button id="mobile-role-chip" type="button" class="px-2.5 py-1.5 rounded-lg bg-[#FAF9F6] border border-slate-200 text-[11px] font-semibold text-slate-700 shrink-0">
+          Role: Ryan
+        </button>
+      </div>
+
+      <!-- Main Scrollable Content -->
+      <main class="flex-1 px-3.5 sm:px-6 lg:px-8 py-5 sm:py-6 max-w-[1400px] w-full mx-auto space-y-6">
+
+        <!-- =============================================================== -->
+        <!-- TOP TELEMETRY STRIP (4 Clickable KPI Cards)                     -->
+        <!-- =============================================================== -->
+        <section id="telemetry-strip" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <button type="button" data-metric="channels" class="metric-card text-left p-4 sm:p-5 rounded-2xl bg-white hover:border-[#2ED3A8] border border-slate-200/90 shadow-2xs transition-all group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-slate-500">Platforms Connected</span>
+              <span class="w-2 h-2 rounded-full bg-[#2ED3A8]"></span>
+            </div>
+            <div id="stat-platforms" class="font-mono text-2xl sm:text-3xl font-semibold text-[#0F172A] tracking-tight">12</div>
+            <div class="text-xs font-medium text-slate-400 mt-1.5 group-hover:text-emerald-700 transition-colors">View channels →</div>
+          </button>
+
+          <button type="button" data-metric="Scheduled" class="metric-card text-left p-4 sm:p-5 rounded-2xl bg-white hover:border-[#2ED3A8] border border-slate-200/90 shadow-2xs transition-all group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-slate-500">Posts Scheduled</span>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-[#2ED3A8]/25 px-2 py-0.5 rounded-md">Live</span>
+            </div>
+            <div id="stat-scheduled" class="font-mono text-2xl sm:text-3xl font-semibold text-emerald-700 tracking-tight">0</div>
+            <div class="text-xs font-medium text-slate-400 mt-1.5 group-hover:text-emerald-700 transition-colors">Filter scheduled →</div>
+          </button>
+
+          <button type="button" data-metric="Approved" class="metric-card text-left p-4 sm:p-5 rounded-2xl bg-white hover:border-[#2ED3A8] border border-slate-200/90 shadow-2xs transition-all group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-slate-500">Posts Approved</span>
+            </div>
+            <div id="stat-approved" class="font-mono text-2xl sm:text-3xl font-semibold text-[#0F172A] tracking-tight">0</div>
+            <div class="text-xs font-medium text-slate-400 mt-1.5 group-hover:text-emerald-700 transition-colors">Ready to publish →</div>
+          </button>
+
+          <button type="button" data-metric="InQueue" class="metric-card text-left p-4 sm:p-5 rounded-2xl bg-white hover:border-[#2ED3A8] border border-slate-200/90 shadow-2xs transition-all group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-slate-500">Posts In Queue</span>
+            </div>
+            <div id="stat-inqueue" class="font-mono text-2xl sm:text-3xl font-semibold text-[#0F172A] tracking-tight">0</div>
+            <div class="text-xs font-medium text-slate-400 mt-1.5 group-hover:text-emerald-700 transition-colors">Drafts &amp; pending →</div>
+          </button>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- VIEW 1: VISUAL CONTENT QUEUE                                    -->
+        <!-- =============================================================== -->
+        <section id="view-queue" class="app-view space-y-5">
+          <!-- Filter Bar -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0" id="queue-status-pills">
+              <button data-status="All" class="q-filter px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap">All Posts</button>
+              <button data-status="Pending Approval" class="q-filter px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap">Pending Approval</button>
+              <button data-status="Approved" class="q-filter px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap">Approved</button>
+              <button data-status="Scheduled" class="q-filter px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap">Scheduled</button>
+              <button data-status="Draft" class="q-filter px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap">Drafts</button>
+              <button data-status="Needs Edits" class="q-filter px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap">Needs Edits</button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <select id="queue-platform-select" class="px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-[#2ED3A8]">
+                <option value="All">All Platforms</option>
+                <option value="Instagram Reels">Instagram Reels</option>
+                <option value="TikTok">TikTok</option>
+                <option value="YouTube Shorts">YouTube Shorts</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="X">X</option>
+              </select>
+              <input id="queue-search" type="text" placeholder="Search posts..." class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8] flex-1 sm:w-52" />
+            </div>
+          </div>
+
+          <!-- Visual Post Cards Grid -->
+          <div id="queue-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"></div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- VIEW 2: APPROVALS QUEUE (RYAN ONLY)                             -->
+        <!-- =============================================================== -->
+        <section id="view-approvals" class="app-view hidden space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xs">
+            <div>
+              <h3 class="font-bold text-base text-[#0F172A]">Pending Approval Queue</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Review Emilie's submissions, approve in one click, or send back revision notes.</p>
+            </div>
+            <span id="approvals-summary-pill" class="font-mono text-xs font-semibold px-3 py-1.5 rounded-xl bg-[#2ED3A8]/20 text-emerald-900">0 awaiting review</span>
+          </div>
+
+          <div id="approvals-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"></div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- VIEW 3: 7-DAY VISUAL SCHEDULE                                   -->
+        <!-- =============================================================== -->
+        <section id="view-schedule" class="app-view hidden space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs">
+            <div class="flex items-center gap-2">
+              <button id="cal-prev" type="button" class="px-3 py-1.5 rounded-xl bg-[#FAF9F6] hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">← Prev</button>
+              <button id="cal-today" type="button" class="px-3 py-1.5 rounded-xl bg-[#2ED3A8]/20 hover:bg-[#2ED3A8]/30 text-xs font-bold text-emerald-900 transition-colors">Today</button>
+              <button id="cal-next" type="button" class="px-3 py-1.5 rounded-xl bg-[#FAF9F6] hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">Next →</button>
+            </div>
+            <div id="cal-range-label" class="font-bold text-sm text-[#0F172A]"></div>
+            <div class="flex items-center gap-3 text-xs font-medium text-slate-500">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#2ED3A8]"></span>Approved / Scheduled</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span>Pending</span>
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-300"></span>Draft</span>
+            </div>
+          </div>
+
+          <div id="calendar-grid" class="grid grid-cols-1 md:grid-cols-7 gap-3"></div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- VIEW 4: RAW ASSET INTAKE & GOOGLE DRIVE PIPELINE                -->
+        <!-- =============================================================== -->
+        <section id="view-intake" class="app-view hidden space-y-6">
+          <!-- 4 Google Drive Folders + Master Sheet Quick Launch Bar -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xs">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div>
+                <h3 class="font-bold text-base text-[#0F172A]">Google Drive &amp; Master Tracker Pipeline</h3>
+                <p class="text-xs text-slate-500 mt-0.5">1-tap access to your raw scraped clips, active edits, approval exports, and Master Sheet.</p>
+              </div>
+              <a id="drive-master-sheet-btn" href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-semibold transition-colors">
+                <span>Open Master Tracker Sheet</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="drive-folders-grid"></div>
+          </div>
+
+          <!-- Add Discovered Video URL / Hashtag Intake Form -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xs">
+            <h3 class="font-bold text-base text-[#0F172A] mb-1">Log Discovered Clip / Hashtag Source</h3>
+            <p class="text-xs text-slate-500 mb-4">Paste a trending Instagram, TikTok, or YouTube URL to queue it for raw download, editing, and watermarking.</p>
+
+            <form id="intake-form" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+              <div class="sm:col-span-4">
+                <label for="intake-url" class="block text-xs font-semibold text-slate-700 mb-1">Source Video URL</label>
+                <input id="intake-url" type="url" required placeholder="https://www.instagram.com/reel/..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8]" />
+              </div>
+              <div class="sm:col-span-3">
+                <label for="intake-workspace" class="block text-xs font-semibold text-slate-700 mb-1">Workspace</label>
+                <select id="intake-workspace" class="w-full px-3 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]"></select>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="intake-tags" class="block text-xs font-semibold text-slate-700 mb-1">Hashtag &amp; Views</label>
+                <input id="intake-tags" type="text" placeholder="#gta6 · 180k views" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8]" />
+              </div>
+              <div class="sm:col-span-2 flex items-end">
+                <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#2ED3A8] hover:bg-[#24c298] text-[#0F172A] font-bold text-xs transition-colors">
+                  + Queue Clip
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Raw Asset Intake List -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-sm text-[#0F172A]">Incoming Raw Clips (<span id="intake-list-count" class="font-mono">0</span>)</h3>
+              <span class="text-xs text-slate-500">Tap "Create Post →" to move a clip into the approval composer</span>
+            </div>
+            <div id="intake-list" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
+          </div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- VIEW 5: CHANNELS & STUDIO LAUNCHERS                             -->
+        <!-- =============================================================== -->
+        <section id="view-channels" class="app-view hidden space-y-6">
+          <div>
+            <h3 class="font-bold text-base text-[#0F172A] mb-1">Native Publishing Studios &amp; Shared Vault</h3>
+            <p class="text-xs text-slate-500 mb-4">Quick launchers for Meta Business Suite, Buffer, Bitwarden, TikTok Studio, YouTube Studio, and X.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="launchers-grid"></div>
+          </div>
+
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xs">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-bold text-base text-[#0F172A]">Connected Client Channels</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Active social handles across your workspaces.</p>
+              </div>
+              <span id="channels-count-badge" class="font-mono text-xs font-semibold text-emerald-900 bg-[#2ED3A8]/25 px-3 py-1 rounded-lg">0 Connected</span>
+            </div>
+            <div id="connected-accounts-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          </div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- VIEW 6: LIVE GOOGLE APPS SCRIPT SYNC & AUTOMATION (RYAN ONLY)   -->
+        <!-- =============================================================== -->
+        <section id="view-sync" class="app-view hidden space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left 7 Cols: Live Sync & Drive URL Configuration -->
+            <div class="lg:col-span-7 bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs space-y-5">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h3 class="font-bold text-base text-[#0F172A]">Live Google Sheets Sync &amp; Email Engine</h3>
+                  <p class="text-xs text-slate-500 mt-1">Paste your zero-cost Google Apps Script Web App URL below to sync posts &amp; raw clips across devices and trigger automatic email alerts.</p>
+                </div>
+                <button id="manual-sync-btn" type="button" class="shrink-0 px-3.5 py-2 rounded-xl bg-[#FAF9F6] hover:bg-slate-100 border border-slate-200 text-xs font-bold text-[#0F172A] transition-colors">
+                  ↻ Sync Now
+                </button>
+              </div>
+
+              <form id="sync-settings-form" class="space-y-4">
+                <div>
+                  <label for="set-apps-script-url" class="block text-xs font-semibold text-slate-700 mb-1">Google Apps Script Web App URL</label>
+                  <input id="set-apps-script-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 font-mono text-xs text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8]" />
+                  <p class="text-[11px] text-slate-500 mt-1">Leave blank to run offline in local browser mode. When connected, every submission &amp; approval syncs automatically.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label for="set-ryan-email" class="block text-xs font-semibold text-slate-700 mb-1">Approver Email (Ryan)</label>
+                    <input id="set-ryan-email" type="email" required class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]" />
+                  </div>
+                  <div>
+                    <label for="set-emilie-email" class="block text-xs font-semibold text-slate-700 mb-1">Coordinator Email (Emilie)</label>
+                    <input id="set-emilie-email" type="email" required class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]" />
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 space-y-3">
+                  <div class="text-xs font-bold text-[#0F172A]">Google Drive Folder &amp; Master Sheet Links</div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label for="set-sheet-link" class="block text-[11px] font-semibold text-slate-600 mb-1">Master Tracker Sheet URL</label>
+                      <input id="set-sheet-link" type="url" placeholder="https://docs.google.com/spreadsheets/..." class="w-full px-3 py-2 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A]" />
+                    </div>
+                    <div>
+                      <label for="set-drive-01" class="block text-[11px] font-semibold text-slate-600 mb-1">01_Raw_Assets Folder URL</label>
+                      <input id="set-drive-01" type="url" placeholder="https://drive.google.com/drive/folders/..." class="w-full px-3 py-2 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A]" />
+                    </div>
+                    <div>
+                      <label for="set-drive-02" class="block text-[11px] font-semibold text-slate-600 mb-1">02_In_Edit Folder URL</label>
+                      <input id="set-drive-02" type="url" placeholder="https://drive.google.com/drive/folders/..." class="w-full px-3 py-2 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A]" />
+                    </div>
+                    <div>
+                      <label for="set-drive-03" class="block text-[11px] font-semibold text-slate-600 mb-1">03_Ready_For_Approval URL</label>
+                      <input id="set-drive-03" type="url" placeholder="https://drive.google.com/drive/folders/..." class="w-full px-3 py-2 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A]" />
+                    </div>
+                    <div class="sm:col-span-2">
+                      <label for="set-drive-04" class="block text-[11px] font-semibold text-slate-600 mb-1">04_Approved_Archive Folder URL</label>
+                      <input id="set-drive-04" type="url" placeholder="https://drive.google.com/drive/folders/..." class="w-full px-3 py-2 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A]" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-2 flex flex-wrap items-center gap-3">
+                  <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#2ED3A8] hover:bg-[#24c298] text-[#0F172A] font-bold text-xs transition-colors">Save Sync &amp; Drive Settings</button>
+                  <button id="reset-demo-btn" type="button" class="px-4 py-2.5 rounded-xl bg-[#FAF9F6] hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-600 transition-colors">Restore Sample Data</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right 5 Cols: Zero-Cost Apps Script Backend + Workspaces -->
+            <div class="lg:col-span-5 space-y-5">
+              <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-bold text-sm text-[#0F172A]">Free Apps Script Backend ($0/mo)</h3>
+                  <button id="copy-gas-btn" type="button" class="px-3 py-1.5 rounded-lg bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-semibold transition-colors">
+                    Copy Code.gs
+                  </button>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Open your Google Sheet → <strong>Extensions → Apps Script</strong>, paste this code, click <strong>Deploy → New deployment → Web app</strong> (Anyone with access), and paste the URL on the left.
+                </p>
+                <pre id="gas-code-preview" class="p-3 rounded-xl bg-[#0F172A] text-slate-200 font-mono text-[10px] leading-relaxed overflow-x-auto max-h-44"></pre>
+              </div>
+
+              <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-bold text-sm text-[#0F172A]">Client Workspaces</h3>
+                  <button id="settings-add-client-btn" type="button" class="text-xs font-bold text-emerald-700 hover:underline">+ Add Workspace</button>
+                </div>
+                <div id="settings-workspaces-list" class="space-y-2"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. MOBILE BOTTOM NAVIGATION BAR (< lg)                                -->
+  <!-- ===================================================================== -->
+  <nav id="mobile-bottom-nav" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-2 py-1.5 flex items-center justify-around">
+    <button data-nav="queue" class="mob-nav-btn flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold text-[#0F172A]">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span>Queue</span>
+    </button>
+    <button id="mob-nav-approvals" data-nav="approvals" class="mob-nav-btn hidden flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-500">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span>Approve</span>
+    </button>
+    <button data-nav="schedule" class="mob-nav-btn flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-500">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Schedule</span>
+    </button>
+    <button data-nav="intake" class="mob-nav-btn flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-500">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Intake</span>
+    </button>
+    <button data-nav="channels" class="mob-nav-btn flex flex-col items-center gap-0.5 px-2.5 py-1 rounded-xl text-[11px] font-semibold text-slate-500">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      <span>Studios</span>
+    </button>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- 4. SLIDE-OVER COMPOSER & APPROVAL REVIEW DRAWER                       -->
+  <!-- ===================================================================== -->
+  <div id="post-drawer" class="hidden fixed inset-0 z-50">
+    <div id="drawer-backdrop" class="drawer-backdrop absolute inset-0 bg-slate-900/45 backdrop-blur-xs"></div>
+
+    <div class="drawer-panel absolute top-0 right-0 h-full w-full max-w-2xl bg-white border-l border-slate-200 shadow-2xl flex flex-col">
+      <!-- Drawer Header -->
+      <div class="px-5 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-[#FAF9F6]">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h3 id="drawer-title" class="font-bold text-base text-[#0F172A]">New Post</h3>
+            <span id="drawer-status-pill" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-200/70 text-slate-700">Draft</span>
+          </div>
+          <p id="drawer-subtitle" class="text-xs text-slate-500 mt-0.5">Compose, link Google Drive media, and preview before submitting.</p>
+        </div>
+        <button id="close-drawer-btn" type="button" class="p-2 rounded-xl text-slate-400 hover:text-[#0F172A] hover:bg-slate-200/60 transition-colors" aria-label="Close Drawer">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Drawer Body -->
+      <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+        <!-- Revision Feedback Banner (if Ryan requested edits) -->
+        <div id="drawer-feedback-banner" class="hidden p-4 rounded-xl bg-amber-50 border border-amber-200">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-amber-800 mb-1">Revision Note from Ryan</div>
+          <p id="drawer-feedback-text" class="text-sm text-amber-950"></p>
+        </div>
+
+        <input type="hidden" id="comp-id" />
+
+        <!-- Workspace & Platform -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="comp-workspace" class="block text-xs font-semibold text-slate-700 mb-1">Client Workspace</label>
+            <select id="comp-workspace" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]"></select>
+          </div>
+          <div>
+            <label for="comp-platform" class="block text-xs font-semibold text-slate-700 mb-1">Target Platform</label>
+            <select id="comp-platform" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm font-semibold text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]">
+              <option value="Instagram Reels">Instagram Reels</option>
+              <option value="TikTok">TikTok</option>
+              <option value="YouTube Shorts">YouTube Shorts</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="X">X</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Title, Date & Time -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5">
+          <div class="sm:col-span-6">
+            <label for="comp-title" class="block text-xs font-semibold text-slate-700 mb-1">Post Title</label>
+            <input id="comp-title" type="text" placeholder="e.g. GTA 6 Map Scale Breakdown" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8]" />
+          </div>
+          <div class="sm:col-span-3">
+            <label for="comp-date" class="block text-xs font-semibold text-slate-700 mb-1">Date</label>
+            <input id="comp-date" type="date" class="w-full px-3 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 font-mono text-xs text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]" />
+          </div>
+          <div class="sm:col-span-3">
+            <label for="comp-time" class="block text-xs font-semibold text-slate-700 mb-1">Time</label>
+            <input id="comp-time" type="time" class="w-full px-3 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 font-mono text-xs text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]" />
+          </div>
+        </div>
+
+        <!-- Google Drive Asset Link -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label for="comp-drive-url" class="text-xs font-semibold text-slate-700">Google Drive Video / Asset Link</label>
+            <a id="comp-drive-open" href="#" target="_blank" rel="noopener noreferrer" class="hidden text-xs font-semibold text-emerald-700 hover:underline">Open in Drive ↗</a>
+          </div>
+          <input id="comp-drive-url" type="url" placeholder="https://drive.google.com/file/d/..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8]" />
+        </div>
+
+        <!-- Aspect Ratio + Local Thumbnail Preview Upload -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-semibold text-slate-700">Visual Frame &amp; Thumbnail</label>
+            <div class="flex items-center gap-1.5">
+              <button type="button" data-ratio="9:16" class="ratio-btn font-mono text-[11px] px-2.5 py-0.5 rounded-lg bg-[#FAF9F6] border border-slate-200 text-slate-600">9:16</button>
+              <button type="button" data-ratio="4:5" class="ratio-btn font-mono text-[11px] px-2.5 py-0.5 rounded-lg bg-[#FAF9F6] border border-slate-200 text-slate-600">4:5</button>
+              <button type="button" data-ratio="16:9" class="ratio-btn font-mono text-[11px] px-2.5 py-0.5 rounded-lg bg-[#FAF9F6] border border-slate-200 text-slate-600">16:9</button>
+            </div>
+          </div>
+          <label for="comp-media-file" class="flex items-center justify-between px-4 py-3 rounded-xl bg-[#FAF9F6] border border-dashed border-slate-300 hover:border-[#2ED3A8] cursor-pointer transition-colors">
+            <span class="flex items-center gap-2.5 text-xs font-medium text-slate-600">
+              <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span id="comp-media-label">Attach cover image or frame preview (optional)</span>
+            </span>
+            <span class="text-xs font-bold text-emerald-700">Browse</span>
+            <input id="comp-media-file" type="file" accept="image/*" class="hidden" />
+          </label>
+        </div>
+
+        <!-- Caption -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label for="comp-caption" class="text-xs font-semibold text-slate-700">Caption &amp; Hashtags</label>
+            <span id="comp-char-count" class="font-mono text-[11px] text-slate-400">0 chars</span>
+          </div>
+          <textarea id="comp-caption" rows="4" placeholder="Write the hook, body copy, and call to action..." class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8] leading-relaxed"></textarea>
+        </div>
+
+        <!-- Live Light-Mode Card Preview -->
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Live Post Preview</div>
+          <div class="max-w-sm mx-auto rounded-2xl bg-[#FAF9F6] border border-slate-200 overflow-hidden shadow-xs">
+            <div class="px-3.5 py-2.5 bg-white border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div id="prev-avatar" class="w-7 h-7 rounded-full bg-[#0F172A] text-[#2ED3A8] font-bold text-xs flex items-center justify-center">G</div>
+                <div class="leading-tight">
+                  <div id="prev-workspace" class="text-xs font-bold text-[#0F172A]">GTA Clipping</div>
+                  <div id="prev-platform" class="text-[11px] text-slate-500">Instagram Reels</div>
+                </div>
+              </div>
+              <span id="prev-time" class="font-mono text-[11px] text-slate-500">10:00</span>
+            </div>
+            <div id="prev-media-box" class="w-full bg-slate-100 flex flex-col items-center justify-center relative overflow-hidden aspect-[4/5] max-h-60">
+              <img id="prev-img" src="" alt="Preview" class="hidden w-full h-full object-cover" />
+              <div id="prev-placeholder" class="text-center p-6">
+                <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center mx-auto mb-2 text-emerald-600 shadow-2xs">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                <div id="prev-ratio-tag" class="font-mono text-[11px] font-semibold text-slate-600">9:16 Vertical Frame</div>
+              </div>
+            </div>
+            <div class="p-3.5 bg-white">
+              <p id="prev-caption" class="text-xs text-slate-700 leading-relaxed line-clamp-3">Your caption preview will appear here...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ryan's Approval Feedback Box (Approver Only) -->
+        <div id="ryan-review-box" class="hidden p-4 rounded-xl bg-[#FAF9F6] border border-slate-200 space-y-2">
+          <label for="ryan-feedback-input" class="block text-xs font-bold text-[#0F172A]">Feedback Note for Emilie</label>
+          <textarea id="ryan-feedback-input" rows="2" placeholder="Optional note on approval, or clear instructions if requesting edits..." class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2ED3A8]"></textarea>
+        </div>
+      </div>
+
+      <!-- Role-Specific Drawer Footer -->
+      <div id="drawer-footer" class="px-5 sm:px-6 py-4 border-t border-slate-200 bg-[#FAF9F6] flex flex-wrap items-center justify-between gap-2.5"></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 5. ADD CLIENT WORKSPACE MODAL (RYAN ONLY)                             -->
+  <!-- ===================================================================== -->
+  <div id="client-modal" class="hidden fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md shadow-xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-base text-[#0F172A]">Add Client Workspace</h3>
+        <button id="close-client-modal" type="button" class="text-slate-400 hover:text-[#0F172A] p-1">✕</button>
+      </div>
+      <form id="client-form" class="p-5 space-y-4">
+        <div>
+          <label for="new-client-name" class="block text-xs font-semibold text-slate-700 mb-1">Company / Brand Name</label>
+          <input id="new-client-name" type="text" required placeholder="e.g. Northstar Fitness" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]" />
+        </div>
+        <div>
+          <label for="new-client-industry" class="block text-xs font-semibold text-slate-700 mb-1">Focus / Niche</label>
+          <input id="new-client-industry" type="text" required placeholder="e.g. Local Wellness &amp; Training" class="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF9F6] border border-slate-200 text-sm text-[#0F172A] focus:outline-none focus:border-[#2ED3A8]" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="cancel-client-modal" class="px-4 py-2 rounded-xl bg-[#FAF9F6] border border-slate-200 text-xs font-semibold text-slate-600 hover:text-[#0F172A]">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#2ED3A8] hover:bg-[#24c298] text-[#0F172A] font-bold text-xs">Create Workspace</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 6. TOAST NOTIFICATION CONTAINER                                       -->
+  <!-- ===================================================================== -->
+  <div id="toast-container" class="fixed bottom-20 lg:bottom-5 right-4 z-50 max-w-sm w-[calc(100%-2rem)] sm:w-auto pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- ===================================================================== -->
+  <!-- APPLICATION JAVASCRIPT                                                -->
+  <!-- ===================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'chalet_by_chairlift_light_v1';
+
+      // Role Definitions (No 'CL' anywhere)
+      const USERS = {
+        emilie: {
+          id: 'emilie',
+          name: 'Emilie',
+          email: 'emilie@usechairlift.com',
+          pin: '1234',
+          role: 'coordinator',
+          roleLabel: 'Content Coordinator',
+          initial: 'E'
+        },
+        ryan: {
+          id: 'ryan',
+          name: 'Ryan',
+          email: 'ryan@usechairlift.com',
+          pin: '2026',
+          role: 'approver',
+          roleLabel: 'Approver / Manager',
+          initial: 'R'
+        }
+      };
+
+      // Ready-to-copy Google Apps Script Backend Code ($0/mo 2-way Sheet sync + automatic MailApp alerts)
+      const APPS_SCRIPT_CODE = `// Chalet by Chairlift — Zero-Cost Google Sheets Sync & Email Backend
+// Paste into Extensions > Apps Script inside your Master Tracker Sheet, then Deploy > Web App.
+
+function doGet(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const postsSheet = getOrCreateSheet(ss, 'Posts', ['id','workspaceId','platform','title','caption','date','time','status','ratio','driveUrl','feedback','createdBy']);
+  const intakeSheet = getOrCreateSheet(ss, 'RawIntake', ['id','workspaceId','url','tags','status','driveUrl','addedBy']);
+  return jsonResponse({
+    ok: true,
+    posts: sheetToObjects(postsSheet),
+    intake: sheetToObjects(intakeSheet)
+  });
+}
+
+function doPost(e) {
+  const payload = JSON.parse(e.postData.contents || '{}');
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const postsSheet = getOrCreateSheet(ss, 'Posts', ['id','workspaceId','platform','title','caption','date','time','status','ratio','driveUrl','feedback','createdBy']);
+  const intakeSheet = getOrCreateSheet(ss, 'RawIntake', ['id','workspaceId','url','tags','status','driveUrl','addedBy']);
+
+  if (Array.isArray(payload.posts)) {
+    replaceSheetRows(postsSheet, ['id','workspaceId','platform','title','caption','date','time','status','ratio','driveUrl','feedback','createdBy'], payload.posts);
+  }
+  if (Array.isArray(payload.intake)) {
+    replaceSheetRows(intakeSheet, ['id','workspaceId','url','tags','status','driveUrl','addedBy'], payload.intake);
+  }
+  if (payload.email && payload.email.to) {
+    MailApp.sendEmail({
+      to: payload.email.to,
+      subject: payload.email.subject || 'Chalet Notification',
+      body: payload.email.body || ''
+    });
+  }
+  return jsonResponse({ ok: true, syncedAt: new Date().toISOString() });
+}
+
+function getOrCreateSheet(ss, name, headers) {
+  let sh = ss.getSheetByName(name);
+  if (!sh) {
+    sh = ss.insertSheet(name);
+    sh.appendRow(headers);
+  }
+  return sh;
+}
+
+function sheetToObjects(sh) {
+  const rows = sh.getDataRange().getValues();
+  if (rows.length < 2) return [];
+  const headers = rows[0];
+  return rows.slice(1).filter(r => r[0]).map(r => {
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = r[i]);
+    return obj;
+  });
+}
+
+function replaceSheetRows(sh, headers, items) {
+  sh.clearContents();
+  sh.appendRow(headers);
+  items.forEach(item => {
+    sh.appendRow(headers.map(h => item[h] || ''));
+  });
+}
+
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}`;
+
+      // Date Helpers
+      function relDate(offset) {
+        const d = new Date();
+        d.setDate(d.getDate() + offset);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      }
+
+      function getMonday(date) {
+        const d = new Date(date);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        d.setDate(diff);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+
+      function fmtDate(iso) {
+        if (!iso) return '';
+        const [y, m, d] = iso.split('-').map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+
+      function esc(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // Default Seed Data
+      function createDefaultState() {
+        return {
+          currentUser: null,
+          activeWorkspace: 'all',
+          settings: {
+            appsScriptUrl: '',
+            ryanEmail: 'ryan@usechairlift.com',
+            emilieEmail: 'emilie@usechairlift.com',
+            sheetUrl: 'https://docs.google.com/spreadsheets',
+            drive01Url: 'https://drive.google.com',
+            drive02Url: 'https://drive.google.com',
+            drive03Url: 'https://drive.google.com',
+            drive04Url: 'https://drive.google.com'
+          },
+          workspaces: [
+            { id: 'ws-chairlift', name: 'Chairlift', industry: 'Web & Client Portals' },
+            { id: 'ws-ryan', name: 'Ryan Peddigrew', industry: 'Founder Personal Brand' },
+            { id: 'ws-gta', name: 'GTA Clipping', industry: 'Short-Form Gaming Clips' }
+          ],
+          channels: [
+            { id: 'ch-1', workspaceId: 'ws-chairlift', platform: 'LinkedIn', handle: 'Chairlift', studio: 'Buffer', url: 'https://publish.buffer.com' },
+            { id: 'ch-2', workspaceId: 'ws-chairlift', platform: 'Instagram Reels', handle: '@usechairlift', studio: 'Meta Business Suite', url: 'https://business.facebook.com' },
+            { id: 'ch-3', workspaceId: 'ws-chairlift', platform: 'TikTok', handle: '@usechairlift', studio: 'TikTok Studio', url: 'https://www.tiktok.com/tiktokstudio' },
+            { id: 'ch-4', workspaceId: 'ws-chairlift', platform: 'X', handle: '@usechairlift', studio: 'X + Bitwarden', url: 'https://x.com' },
+            { id: 'ch-5', workspaceId: 'ws-ryan', platform: 'LinkedIn', handle: 'Ryan Peddigrew', studio: 'Buffer', url: 'https://publish.buffer.com' },
+            { id: 'ch-6', workspaceId: 'ws-ryan', platform: 'X', handle: '@ryanpeddigrew', studio: 'Buffer', url: 'https://publish.buffer.com' },
+            { id: 'ch-7', workspaceId: 'ws-ryan', platform: 'Instagram Reels', handle: '@ryanpeddigrew', studio: 'Meta Business Suite', url: 'https://business.facebook.com' },
+            { id: 'ch-8', workspaceId: 'ws-gta', platform: 'TikTok', handle: '@gtaclipsmedia', studio: 'TikTok Studio', url: 'https://www.tiktok.com/tiktokstudio' },
+            { id: 'ch-9', workspaceId: 'ws-gta', platform: 'Instagram Reels', handle: '@gtaclipsmedia', studio: 'Meta Business Suite', url: 'https://business.facebook.com' },
+            { id: 'ch-10', workspaceId: 'ws-gta', platform: 'YouTube Shorts', handle: 'GTA Clipping', studio: 'YouTube Studio', url: 'https://studio.youtube.com' },
+            { id: 'ch-11', workspaceId: 'ws-gta', platform: 'X', handle: '@gtaclipsmedia', studio: 'X + Bitwarden', url: 'https://x.com' },
+            { id: 'ch-12', workspaceId: 'ws-chairlift', platform: 'YouTube Shorts', handle: 'Chairlift', studio: 'YouTube Studio', url: 'https://studio.youtube.com' }
+          ],
+          posts: [
+            {
+              id: 'post-101',
+              workspaceId: 'ws-gta',
+              platform: 'TikTok',
+              title: 'Vice City Beach Coastline Comparison (4K)',
+              caption: 'Side-by-side shoreline comparison from the latest trailer — look at the draw distance at 0:14. Which district are you exploring first? #gta6 #gtaclips',
+              date: relDate(0),
+              time: '17:30',
+              status: 'Pending Approval',
+              ratio: '9:16',
+              driveUrl: 'https://drive.google.com',
+              mediaData: '',
+              feedback: '',
+              createdBy: 'Emilie'
+            },
+            {
+              id: 'post-102',
+              workspaceId: 'ws-chairlift',
+              platform: 'Instagram Reels',
+              title: 'How We Ship a Custom Client Portal in 48 Hours',
+              caption: 'Stop burying client deliverables in 20-message email threads. Here is the clean, branded portal experience we build so your team saves 6+ hours every week.',
+              date: relDate(1),
+              time: '10:00',
+              status: 'Pending Approval',
+              ratio: '9:16',
+              driveUrl: 'https://drive.google.com',
+              mediaData: '',
+              feedback: '',
+              createdBy: 'Emilie'
+            },
+            {
+              id: 'post-103',
+              workspaceId: 'ws-ryan',
+              platform: 'LinkedIn',
+              title: 'Our Zero-Friction Stack for Managing 12 Social Channels',
+              caption: 'Most founders either hold every login hostage or text passwords around. Here is the clean role-based workflow we run across Meta Business Suite, Buffer, and Bitwarden.',
+              date: relDate(0),
+              time: '09:00',
+              status: 'Scheduled',
+              ratio: '16:9',
+              driveUrl: '',
+              mediaData: '',
+              feedback: 'Approved — great structure.',
+              createdBy: 'Emilie'
+            },
+            {
+              id: 'post-104',
+              workspaceId: 'ws-gta',
+              platform: 'YouTube Shorts',
+              title: 'Top 3 Hidden Details in Frame 412',
+              caption: 'Did you spot the neon sign reflection on the hood? Full 40-second breakdown. #gtashorts #gaming',
+              date: relDate(2),
+              time: '18:00',
+              status: 'Approved',
+              ratio: '9:16',
+              driveUrl: 'https://drive.google.com',
+              mediaData: '',
+              feedback: 'Ready to schedule in YouTube Studio.',
+              createdBy: 'Emilie'
+            },
+            {
+              id: 'post-105',
+              workspaceId: 'ws-chairlift',
+              platform: 'X',
+              title: '3 Intake Bottlenecks Costing Service Companies Deals',
+              caption: 'If a prospect has to follow up twice just to book a quote, they already called your competitor. Three quick fixes we ship on every Chairlift site:',
+              date: relDate(3),
+              time: '13:15',
+              status: 'Draft',
+              ratio: '4:5',
+              driveUrl: '',
+              mediaData: '',
+              feedback: '',
+              createdBy: 'Emilie'
+            }
+          ],
+          intake: [
+            {
+              id: 'in-1',
+              workspaceId: 'ws-gta',
+              url: 'https://www.instagram.com/reel/C9xampleGTA01/',
+              tags: '#gta6 · 340k views',
+              status: 'Ready to Edit',
+              driveUrl: 'https://drive.google.com',
+              addedBy: 'Emilie'
+            },
+            {
+              id: 'in-2',
+              workspaceId: 'ws-gta',
+              url: 'https://www.tiktok.com/@gtaclips/video/741928371',
+              tags: '#vicecity · 510k views',
+              status: 'In Edit',
+              driveUrl: 'https://drive.google.com',
+              addedBy: 'Emilie'
+            },
+            {
+              id: 'in-3',
+              workspaceId: 'ws-chairlift',
+              url: 'https://www.instagram.com/reel/C9xampleSaaS02/',
+              tags: '#clientexperience · 82k views',
+              status: 'Queued for Download',
+              driveUrl: '',
+              addedBy: 'Emilie'
+            }
+          ],
+          notifications: [
+            {
+              id: 'nt-1',
+              forRole: 'approver',
+              title: 'New submission from Emilie',
+              body: '"Vice City Beach Coastline Comparison (4K)" (GTA Clipping · TikTok) is waiting for approval.',
+              time: '12m ago',
+              read: false,
+              postId: 'post-101'
+            },
+            {
+              id: 'nt-2',
+              forRole: 'coordinator',
+              title: 'Approved by Ryan',
+              body: '"Top 3 Hidden Details in Frame 412" (GTA Clipping · YouTube Shorts) is approved to post.',
+              time: '1h ago',
+              read: false,
+              postId: 'post-104'
+            }
+          ]
+        };
+      }
+
+      // Runtime State
+      let state = loadState();
+      let currentView = 'queue';
+      let queueStatusFilter = 'All';
+      let queuePlatformFilter = 'All';
+      let queueSearch = '';
+      let calMonday = getMonday(new Date());
+      let draftMediaData = '';
+      let draftRatio = '9:16';
+      let syncStateLabel = 'Local Mode';
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && Array.isArray(parsed.posts)) return parsed;
+          }
+        } catch (err) {
+          console.error('Failed to read local state:', err);
+        }
+        return createDefaultState();
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (err) {
+          console.error('Failed to persist local state:', err);
+        }
+      }
+
+      function getCurrentUser() {
+        return state.currentUser ? USERS[state.currentUser] : null;
+      }
+
+      function getWorkspaceName(wsId) {
+        const ws = state.workspaces.find(w => w.id === wsId);
+        return ws ? ws.name : 'Workspace';
+      }
+
+      function getScopedPosts() {
+        if (state.activeWorkspace === 'all') return state.posts;
+        return state.posts.filter(p => p.workspaceId === state.activeWorkspace);
+      }
+
+      function getScopedChannels() {
+        if (state.activeWorkspace === 'all') return state.channels;
+        return state.channels.filter(c => c.workspaceId === state.activeWorkspace);
+      }
+
+      function getScopedIntake() {
+        if (state.activeWorkspace === 'all') return state.intake;
+        return state.intake.filter(i => i.workspaceId === state.activeWorkspace);
+      }
+
+      // ===================================================================
+      // LIVE GOOGLE APPS SCRIPT SYNC ENGINE (GET / POST + LOCAL FALLBACK)
+      // ===================================================================
+      function updateSyncBadge(mode, text) {
+        syncStateLabel = text;
+        const dot = document.getElementById('sync-status-dot');
+        const label = document.getElementById('sync-status-text');
+        if (!dot || !label) return;
+        label.textContent = text;
+        dot.className = mode === 'live'
+          ? 'w-2 h-2 rounded-full bg-[#2ED3A8]'
+          : mode === 'syncing'
+            ? 'w-2 h-2 rounded-full bg-amber-400 animate-pulse'
+            : 'w-2 h-2 rounded-full bg-slate-400';
+      }
+
+      async function pullFromAppsScript(silent) {
+        const url = (state.settings.appsScriptUrl || '').trim();
+        if (!url) {
+          updateSyncBadge('local', 'Local Mode');
+          return;
+        }
+        updateSyncBadge('syncing', 'Syncing...');
+        try {
+          const res = await fetch(url, { method: 'GET' });
+          const data = await res.json();
+          if (data && data.ok) {
+            if (Array.isArray(data.posts) && data.posts.length > 0) {
+              // Merge remote rows while preserving any local media thumbnails
+              const localMap = new Map(state.posts.map(p => [p.id, p]));
+              state.posts = data.posts.map(rp => ({
+                ...rp,
+                mediaData: (localMap.get(rp.id) && localMap.get(rp.id).mediaData) || ''
+              }));
+            }
+            if (Array.isArray(data.intake) && data.intake.length > 0) {
+              state.intake = data.intake;
+            }
+            saveState();
+            renderAll();
+            updateSyncBadge('live', 'Sheet Synced');
+            if (!silent) showToast('Synced live with Master Google Sheet');
+          } else {
+            updateSyncBadge('local', 'Local Fallback');
+          }
+        } catch (err) {
+          console.warn('Apps Script GET fallback to local:', err);
+          updateSyncBadge('local', 'Local Fallback');
+          if (!silent) showToast('Using local mode — check Apps Script URL');
+        }
+      }
+
+      async function pushToAppsScript(emailPayload) {
+        const url = (state.settings.appsScriptUrl || '').trim();
+        if (!url) {
+          updateSyncBadge('local', 'Local Mode');
+          return false;
+        }
+        updateSyncBadge('syncing', 'Syncing...');
+        try {
+          const cleanPosts = state.posts.map(({ mediaData, ...rest }) => rest);
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              posts: cleanPosts,
+              intake: state.intake,
+              email: emailPayload || null
+            })
+          });
+          updateSyncBadge('live', 'Sheet Synced');
+          return true;
+        } catch (err) {
+          console.warn('Apps Script POST fallback:', err);
+          updateSyncBadge('local', 'Local Fallback');
+          return false;
+        }
+      }
+
+      // ===================================================================
+      // TOAST & IN-APP + EMAIL NOTIFICATION ENGINE
+      // ===================================================================
+      function showToast(message, actionLabel, actionHref) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'pointer-events-auto bg-white border border-slate-200 rounded-2xl p-3.5 shadow-lg flex items-center justify-between gap-3 border-l-4 border-l-[#2ED3A8]';
+        toast.innerHTML = `
+          <div class="text-xs font-semibold text-[#0F172A]">${esc(message)}</div>
+          ${actionLabel && actionHref ? `<a href="${esc(actionHref)}" class="shrink-0 px-3 py-1.5 rounded-xl bg-[#2ED3A8] text-[#0F172A] font-bold text-[11px] hover:bg-[#24c298] transition-colors">${esc(actionLabel)}</a>` : ''}
+        `;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transition = 'opacity 0.25s ease';
+          setTimeout(() => toast.remove(), 260);
+        }, actionHref ? 6500 : 3000);
+      }
+
+      async function dispatchWorkflowNotification({ forRole, title, body, post, emailTo, emailSubject, emailBody, toastMsg, emailBtnLabel }) {
+        // 1. Add In-App Notification
+        state.notifications.unshift({
+          id: 'nt-' + Date.now(),
+          forRole,
+          title,
+          body,
+          time: 'Just now',
+          read: false,
+          postId: post ? post.id : null
+        });
+        saveState();
+
+        // 2. Push to Apps Script (which also sends MailApp.sendEmail automatically if configured)
+        const synced = await pushToAppsScript({
+          to: emailTo,
+          subject: emailSubject,
+          body: emailBody
+        });
+
+        // 3. Offer instant pre-filled mailto: button when running in local mode
+        if (synced) {
+          showToast(`${toastMsg} · Sheet & email sent`);
+        } else {
+          const mailto = `mailto:${encodeURIComponent(emailTo)}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+          showToast(toastMsg, emailBtnLabel, mailto);
+        }
+      }
+
+      // ===================================================================
+      // AUTHENTICATION & ROLE SWITCHING
+      // ===================================================================
+      function loginAs(userId) {
+        state.currentUser = userId;
+        saveState();
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('app-shell').classList.remove('hidden');
+        document.getElementById('mobile-bottom-nav').classList.remove('hidden');
+        applyRoleUI();
+        switchView('queue');
+        pullFromAppsScript(true);
+        showToast(`Signed in as ${USERS[userId].name}`);
+      }
+
+      function logout() {
+        state.currentUser = null;
+        saveState();
+        document.getElementById('app-shell').classList.add('hidden');
+        document.getElementById('mobile-bottom-nav').classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('login-form').reset();
+        document.getElementById('login-error').classList.add('hidden');
+      }
+
+      function applyRoleUI() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const isApprover = user.role === 'approver';
+
+        document.getElementById('user-avatar').textContent = user.initial;
+        document.getElementById('user-avatar').className = isApprover
+          ? 'w-9 h-9 rounded-full bg-[#2ED3A8] text-[#0F172A] font-bold text-xs flex items-center justify-center shrink-0'
+          : 'w-9 h-9 rounded-full bg-[#0F172A] text-white font-bold text-xs flex items-center justify-center shrink-0';
+        document.getElementById('user-display-name').textContent = user.name;
+        document.getElementById('user-role-label').textContent = user.roleLabel;
+        document.getElementById('mobile-role-chip').textContent = `Role: ${user.name}`;
+
+        // Ryan-only controls
+        document.getElementById('nav-approvals').classList.toggle('hidden', !isApprover);
+        document.getElementById('nav-sync').classList.toggle('hidden', !isApprover);
+        document.getElementById('mob-nav-approvals').classList.toggle('hidden', !isApprover);
+        document.getElementById('sidebar-add-client-btn').classList.toggle('hidden', !isApprover);
+
+        const topPill = document.getElementById('topbar-approvals-pill');
+        topPill.classList.toggle('hidden', !isApprover);
+        topPill.classList.toggle('inline-flex', isApprover);
+      }
+
+      // ===================================================================
+      // VIEW ROUTING
+      // ===================================================================
+      const VIEW_META = {
+        queue: { title: 'Content Queue', sub: 'Visual aspect-ratio cards, statuses, and multi-client publishing' },
+        approvals: { title: 'Approvals', sub: 'Review Emilie’s pending submissions and notify with one click' },
+        schedule: { title: '7-Day Schedule', sub: 'Weekly publishing calendar across connected platforms' },
+        intake: { title: 'Raw Asset Intake', sub: 'Hashtag & URL intake queue linked to your Google Drive folders' },
+        channels: { title: 'Channels & Studios', sub: 'Connected handles and native publishing studio launchers' },
+        sync: { title: 'Live Sync & Drive', sub: 'Google Apps Script 2-way sync, email alerts, and Drive folder links' }
+      };
+
+      function switchView(viewId) {
+        const user = getCurrentUser();
+        if (user && user.role !== 'approver' && (viewId === 'approvals' || viewId === 'sync')) {
+          viewId = 'queue';
+        }
+        currentView = viewId;
+
+        document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
+        const target = document.getElementById(`view-${viewId}`);
+        if (target) target.classList.remove('hidden');
+
+        document.getElementById('page-title').textContent = VIEW_META[viewId].title;
+        document.getElementById('page-subtitle').textContent = VIEW_META[viewId].sub;
+
+        // Desktop sidebar highlight
+        document.querySelectorAll('.nav-item').forEach(btn => {
+          const active = btn.dataset.nav === viewId;
+          btn.className = active
+            ? 'nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold bg-[#2ED3A8]/20 text-[#0F172A] transition-colors'
+            : 'nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-[#0F172A] hover:bg-slate-100/80 transition-colors';
+        });
+
+        // Mobile bottom bar highlight
+        document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+          const active = btn.dataset.nav === viewId;
+          btn.classList.toggle('text-[#0F172A]', active);
+          btn.classList.toggle('bg-[#2ED3A8]/20', active);
+          btn.classList.toggle('text-slate-500', !active);
+        });
+
+        applyRoleUI();
+        closeMobileSidebar();
+        renderAll();
+      }
+
+      function renderAll() {
+        const user = getCurrentUser();
+        if (!user) return;
+        renderWorkspaceSelectors();
+        renderTelemetry();
+        renderNotifications();
+        renderQueue();
+        if (user.role === 'approver') {
+          renderApprovals();
+          renderSyncSettings();
+        }
+        renderSchedule();
+        renderIntake();
+        renderChannels();
+      }
+
+      // ===================================================================
+      // RENDER: WORKSPACE SELECTORS
+      // ===================================================================
+      function renderWorkspaceSelectors() {
+        const ids = ['workspace-selector', 'mobile-workspace-selector'];
+        ids.forEach(id => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          sel.innerHTML = '<option value="all">All Workspaces</option>';
+          state.workspaces.forEach(ws => {
+            const opt = document.createElement('option');
+            opt.value = ws.id;
+            opt.textContent = ws.name;
+            if (ws.id === state.activeWorkspace) opt.selected = true;
+            sel.appendChild(opt);
+          });
+        });
+      }
+
+      // ===================================================================
+      // RENDER: TOP TELEMETRY STRIP
+      // ===================================================================
+      function renderTelemetry() {
+        const posts = getScopedPosts();
+        const channels = getScopedChannels();
+
+        const scheduled = posts.filter(p => p.status === 'Scheduled').length;
+        const approved = posts.filter(p => p.status === 'Approved').length;
+        const inQueue = posts.filter(p => p.status === 'Draft' || p.status === 'Pending Approval' || p.status === 'Needs Edits').length;
+        const pendingAll = state.posts.filter(p => p.status === 'Pending Approval').length;
+
+        document.getElementById('stat-platforms').textContent = String(channels.length);
+        document.getElementById('stat-scheduled').textContent = String(scheduled);
+        document.getElementById('stat-approved').textContent = String(approved);
+        document.getElementById('stat-inqueue').textContent = String(inQueue);
+
+        document.getElementById('sidebar-approval-badge').textContent = String(pendingAll);
+        document.getElementById('topbar-approval-count').textContent = String(pendingAll);
+        document.getElementById('approvals-summary-pill').textContent = `${pendingAll} awaiting review`;
+        document.getElementById('sidebar-intake-badge').textContent = String(getScopedIntake().length);
+      }
+
+      // ===================================================================
+      // RENDER: STATUS BADGE HELPER
+      // ===================================================================
+      function statusBadgeHTML(status) {
+        if (status === 'Pending Approval') {
+          return `<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-900">Pending Approval</span>`;
+        }
+        if (status === 'Approved') {
+          return `<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#2ED3A8]/25 text-emerald-950">Approved</span>`;
+        }
+        if (status === 'Scheduled') {
+          return `<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-900">Scheduled</span>`;
+        }
+        if (status === 'Needs Edits') {
+          return `<span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-900">Needs Edits</span>`;
+        }
+        return `<span class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">Draft</span>`;
+      }
+
+      // ===================================================================
+      // RENDER: VISUAL POST CARD
+      // ===================================================================
+      function buildPostCard(post) {
+        const wsName = getWorkspaceName(post.workspaceId);
+        const card = document.createElement('article');
+        card.className = 'group bg-white hover:border-[#2ED3A8] border border-slate-200/90 rounded-2xl overflow-hidden flex flex-col shadow-2xs hover:shadow-md transition-all cursor-pointer';
+
+        const ratioLabel = post.ratio || '9:16';
+        const visualPreview = post.mediaData
+          ? `<img src="${post.mediaData}" alt="${esc(post.title)}" class="w-full h-44 object-cover" />`
+          : `<div class="w-full h-44 bg-gradient-to-br from-[#FAF9F6] via-slate-100 to-emerald-50/70 p-4 flex flex-col justify-between border-b border-slate-100">
+               <div class="flex items-center justify-between">
+                 <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white border border-slate-200/90 text-[#0F172A] shadow-2xs">${esc(post.platform)}</span>
+                 <span class="font-mono text-[11px] font-medium text-slate-500 bg-white/90 border border-slate-200/80 px-2 py-0.5 rounded-md">${esc(ratioLabel)}</span>
+               </div>
+               <div class="flex items-end justify-between gap-2">
+                 <div class="font-bold text-sm text-[#0F172A] line-clamp-2 leading-snug">${esc(post.title)}</div>
+                 ${post.driveUrl ? `<span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#0F172A] text-[#2ED3A8]">Drive ✓</span>` : ''}
+               </div>
+             </div>`;
+
+        card.innerHTML = `
+          <div class="relative overflow-hidden">
+            ${visualPreview}
+            ${post.mediaData ? `<span class="absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white/95 text-[#0F172A] shadow-xs">${esc(post.platform)}</span>` : ''}
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-xs font-bold text-emerald-800">${esc(wsName)}</span>
+                <span class="font-mono text-[11px] text-slate-500">${fmtDate(post.date)} · ${esc(post.time)}</span>
+              </div>
+              <h4 class="font-bold text-sm text-[#0F172A] group-hover:text-emerald-800 transition-colors line-clamp-1 mb-1">${esc(post.title)}</h4>
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">${esc(post.caption)}</p>
+              ${post.feedback ? `<div class="mt-2.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-950 line-clamp-1"><span class="font-bold text-amber-800 mr-1">Note:</span>${esc(post.feedback)}</div>` : ''}
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              ${statusBadgeHTML(post.status)}
+              <span class="text-xs font-semibold text-slate-400 group-hover:text-[#0F172A] transition-colors">Open →</span>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => openDrawer(post.id));
+        return card;
+      }
+
+      // ===================================================================
+      // RENDER: VISUAL CONTENT QUEUE
+      // ===================================================================
+      function renderQueue() {
+        document.querySelectorAll('.q-filter').forEach(btn => {
+          const active = btn.dataset.status === queueStatusFilter;
+          btn.className = active
+            ? 'q-filter px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#0F172A] text-white transition-colors whitespace-nowrap'
+            : 'q-filter px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200/90 text-slate-600 hover:text-[#0F172A] transition-colors whitespace-nowrap';
+        });
+
+        const search = queueSearch.trim().toLowerCase();
+        const filtered = getScopedPosts()
+          .filter(p => {
+            if (queueStatusFilter === 'All') return true;
+            if (queueStatusFilter === 'InQueue') return p.status === 'Draft' || p.status === 'Pending Approval' || p.status === 'Needs Edits';
+            return p.status === queueStatusFilter;
+          })
+          .filter(p => queuePlatformFilter === 'All' || p.platform === queuePlatformFilter)
+          .filter(p => !search || p.title.toLowerCase().includes(search) || p.caption.toLowerCase().includes(search) || p.platform.toLowerCase().includes(search))
+          .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+
+        const grid = document.getElementById('queue-grid');
+        grid.innerHTML = '';
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full bg-white border border-slate-200/90 rounded-2xl p-10 text-center">
+              <div class="font-bold text-base text-[#0F172A] mb-1">No posts match these filters</div>
+              <p class="text-xs text-slate-500 mb-4">Reset your filters or create a new post in the composer.</p>
+              <button type="button" id="empty-new-post" class="px-4 py-2 rounded-xl bg-[#2ED3A8] text-[#0F172A] font-bold text-xs">+ New Post</button>
+            </div>
+          `;
+          const btn = document.getElementById('empty-new-post');
+          if (btn) btn.addEventListener('click', () => openDrawer(null));
+          return;
+        }
+
+        filtered.forEach(p => grid.appendChild(buildPostCard(p)));
+      }
+
+      // ===================================================================
+      // RENDER: APPROVALS VIEW (RYAN ONLY)
+      // ===================================================================
+      function renderApprovals() {
+        const pending = getScopedPosts()
+          .filter(p => p.status === 'Pending Approval')
+          .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+
+        const grid = document.getElementById('approvals-grid');
+        grid.innerHTML = '';
+
+        if (pending.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full bg-white border border-slate-200/90 rounded-2xl p-10 text-center">
+              <div class="w-10 h-10 rounded-full bg-[#2ED3A8]/25 text-emerald-900 font-bold flex items-center justify-center mx-auto mb-3">✓</div>
+              <div class="font-bold text-base text-[#0F172A] mb-1">All Caught Up</div>
+              <p class="text-xs text-slate-500">Zero posts waiting for approval right now.</p>
+            </div>
+          `;
+          return;
+        }
+
+        pending.forEach(p => grid.appendChild(buildPostCard(p)));
+      }
+
+      // ===================================================================
+      // RENDER: 7-DAY VISUAL SCHEDULE
+      // ===================================================================
+      function renderSchedule() {
+        const sun = new Date(calMonday);
+        sun.setDate(sun.getDate() + 6);
+        document.getElementById('cal-range-label').textContent =
+          `${calMonday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} — ${sun.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+        const grid = document.getElementById('calendar-grid');
+        grid.innerHTML = '';
+        const todayIso = relDate(0);
+        const posts = getScopedPosts();
+
+        for (let i = 0; i < 7; i++) {
+          const d = new Date(calMonday);
+          d.setDate(d.getDate() + i);
+          const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          const isToday = iso === todayIso;
+          const dayPosts = posts.filter(p => p.date === iso).sort((a, b) => a.time.localeCompare(b.time));
+
+          const col = document.createElement('div');
+          col.className = `bg-white rounded-2xl p-3 flex flex-col min-h-[210px] shadow-2xs ${isToday ? 'border-2 border-[#2ED3A8]' : 'border border-slate-200/90'}`;
+          col.innerHTML = `
+            <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider ${isToday ? 'text-emerald-700' : 'text-slate-400'}">${d.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                <div class="font-extrabold text-base text-[#0F172A]">${d.getDate()}</div>
+              </div>
+              <button type="button" data-cal-add="${iso}" class="px-2 py-1 rounded-lg bg-[#FAF9F6] hover:bg-[#2ED3A8]/20 border border-slate-200 text-[11px] font-bold text-slate-600 hover:text-[#0F172A] transition-colors">+ Add</button>
+            </div>
+            <div class="space-y-2 flex-1" data-cal-slot="${iso}"></div>
+          `;
+
+          const slot = col.querySelector(`[data-cal-slot="${iso}"]`);
+          if (dayPosts.length === 0) {
+            slot.innerHTML = `<div class="text-xs text-slate-300 py-4 text-center">Open</div>`;
+          } else {
+            dayPosts.forEach(p => {
+              const dot = p.status === 'Approved' || p.status === 'Scheduled' ? 'bg-[#2ED3A8]' : p.status === 'Pending Approval' ? 'bg-amber-400' : 'bg-slate-300';
+              const item = document.createElement('button');
+              item.type = 'button';
+              item.className = 'w-full text-left p-2.5 rounded-xl bg-[#FAF9F6] hover:bg-emerald-50/60 border border-slate-200/80 transition-colors space-y-1';
+              item.innerHTML = `
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[10px] font-medium text-slate-500">${esc(p.time)}</span>
+                  <span class="w-2 h-2 rounded-full ${dot}"></span>
+                </div>
+                <div class="text-xs font-bold text-[#0F172A] line-clamp-2 leading-snug">${esc(p.title)}</div>
+                <div class="text-[10px] font-semibold text-emerald-800 truncate">${esc(p.platform)} · ${esc(getWorkspaceName(p.workspaceId))}</div>
+              `;
+              item.addEventListener('click', () => openDrawer(p.id));
+              slot.appendChild(item);
+            });
+          }
+
+          col.querySelector(`[data-cal-add="${iso}"]`).addEventListener('click', () => openDrawer(null, iso));
+          grid.appendChild(col);
+        }
+      }
+
+      // ===================================================================
+      // RENDER: RAW ASSET INTAKE & GOOGLE DRIVE PIPELINE
+      // ===================================================================
+      function renderIntake() {
+        // Populate workspace select inside intake form
+        const wsSel = document.getElementById('intake-workspace');
+        wsSel.innerHTML = '';
+        state.workspaces.forEach(ws => {
+          const opt = document.createElement('option');
+          opt.value = ws.id;
+          opt.textContent = ws.name;
+          if (ws.id === state.activeWorkspace) opt.selected = true;
+          wsSel.appendChild(opt);
+        });
+
+        // Update Master Sheet button link
+        document.getElementById('drive-master-sheet-btn').href = state.settings.sheetUrl || 'https://docs.google.com/spreadsheets';
+
+        // 4 Google Drive Folders
+        const folders = [
+          { num: '01', name: '01_Raw_Assets', desc: 'Clean downloaded source videos', url: state.settings.drive01Url || 'https://drive.google.com' },
+          { num: '02', name: '02_In_Edit', desc: 'Active CapCut & hook cuts', url: state.settings.drive02Url || 'https://drive.google.com' },
+          { num: '03', name: '03_Ready_For_Approval', desc: 'Watermarked exports for Ryan', url: state.settings.drive03Url || 'https://drive.google.com' },
+          { num: '04', name: '04_Approved_Archive', desc: 'Signed-off & published clips', url: state.settings.drive04Url || 'https://drive.google.com' }
+        ];
+
+        const fGrid = document.getElementById('drive-folders-grid');
+        fGrid.innerHTML = '';
+        folders.forEach(f => {
+          const a = document.createElement('a');
+          a.href = f.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'p-3.5 rounded-xl bg-[#FAF9F6] hover:bg-emerald-50/60 border border-slate-200/90 hover:border-[#2ED3A8] transition-all flex items-start justify-between gap-2 group';
+          a.innerHTML = `
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#0F172A] text-[#2ED3A8]">${f.num}</span>
+                <span class="font-bold text-xs text-[#0F172A] truncate group-hover:text-emerald-800">${esc(f.name)}</span>
+              </div>
+              <div class="text-[11px] text-slate-500 mt-1">${esc(f.desc)}</div>
+            </div>
+            <span class="text-xs font-bold text-slate-400 group-hover:text-[#0F172A]">↗</span>
+          `;
+          fGrid.appendChild(a);
+        });
+
+        // Intake Items List
+        const items = getScopedIntake();
+        document.getElementById('intake-list-count').textContent = String(items.length);
+        const list = document.getElementById('intake-list');
+        list.innerHTML = '';
+
+        if (items.length === 0) {
+          list.innerHTML = `<div class="col-span-full bg-white border border-slate-200 rounded-2xl p-8 text-center text-xs text-slate-500">No raw video URLs queued yet. Paste a TikTok, Instagram, or YouTube URL above.</div>`;
+          return;
+        }
+
+        items.forEach(item => {
+          const wsName = getWorkspaceName(item.workspaceId);
+          const sourceLabel = item.url.includes('tiktok') ? 'TikTok Source' : item.url.includes('youtube') || item.url.includes('youtu.be') ? 'YouTube Source' : 'Instagram Source';
+
+          const card = document.createElement('div');
+          card.className = 'bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs flex flex-col justify-between gap-3';
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-xs font-bold text-emerald-800">${esc(wsName)} · ${sourceLabel}</span>
+                <span class="font-mono text-[11px] text-slate-500">${esc(item.tags || 'Unlabeled')}</span>
+              </div>
+              <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-[#0F172A] hover:underline break-all line-clamp-1">${esc(item.url)}</a>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+              <select data-intake-status="${item.id}" class="px-2.5 py-1.5 rounded-lg bg-[#FAF9F6] border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:border-[#2ED3A8]">
+                <option value="Queued for Download" ${item.status === 'Queued for Download' ? 'selected' : ''}>Queued for Download</option>
+                <option value="Ready to Edit" ${item.status === 'Ready to Edit' ? 'selected' : ''}>Ready to Edit</option>
+                <option value="In Edit" ${item.status === 'In Edit' ? 'selected' : ''}>In Edit</option>
+              </select>
+
+              <div class="flex items-center gap-2">
+                <button type="button" data-intake-promote="${item.id}" class="px-3 py-1.5 rounded-xl bg-[#2ED3A8] hover:bg-[#24c298] text-[#0F172A] font-bold text-xs transition-colors">
+                  Create Post →
+                </button>
+              </div>
+            </div>
+          `;
+
+          card.querySelector(`[data-intake-status="${item.id}"]`).addEventListener('change', (e) => {
+            item.status = e.target.value;
+            saveState();
+            pushToAppsScript(null);
+            showToast(`Asset marked "${item.status}"`);
+          });
+
+          card.querySelector(`[data-intake-promote="${item.id}"]`).addEventListener('click', () => {
+            openDrawer(null, relDate(1), {
+              workspaceId: item.workspaceId,
+              title: item.tags ? `Clip (${item.tags})` : 'Edited Vertical Clip',
+              caption: `Source: ${item.url}\n\n`,
+              driveUrl: item.driveUrl || state.settings.drive03Url || ''
+            });
+          });
+
+          list.appendChild(card);
+        });
+      }
+
+      // ===================================================================
+      // RENDER: CHANNELS & STUDIO LAUNCHERS
+      // ===================================================================
+      function renderChannels() {
+        const launchers = [
+          { name: 'Meta Business Suite', desc: 'Chairlift, Ryan & GTA (IG Reels + FB)', url: 'https://business.facebook.com' },
+          { name: 'Buffer', desc: 'Ryan LinkedIn, Chairlift LI & Ryan X', url: 'https://publish.buffer.com' },
+          { name: 'Bitwarden Vault', desc: 'Shared Chairlift Organization Logins', url: 'https://vault.bitwarden.com' },
+          { name: 'TikTok Studio', desc: 'Chairlift & GTA Vertical Uploads', url: 'https://www.tiktok.com/tiktokstudio' },
+          { name: 'YouTube Studio', desc: 'GTA Shorts & Channel Analytics', url: 'https://studio.youtube.com' },
+          { name: 'X (Twitter)', desc: 'Chairlift & GTA Native Feeds', url: 'https://x.com' }
+        ];
+
+        const lGrid = document.getElementById('launchers-grid');
+        lGrid.innerHTML = '';
+        launchers.forEach(l => {
+          const a = document.createElement('a');
+          a.href = l.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'p-4 rounded-2xl bg-white hover:border-[#2ED3A8] border border-slate-200/90 shadow-2xs transition-all flex items-start justify-between gap-3 group';
+          a.innerHTML = `
+            <div>
+              <div class="font-bold text-sm text-[#0F172A] group-hover:text-emerald-800 transition-colors">${esc(l.name)}</div>
+              <div class="text-xs text-slate-500 mt-1">${esc(l.desc)}</div>
+            </div>
+            <span class="text-xs font-bold text-emerald-700">↗</span>
+          `;
+          lGrid.appendChild(a);
+        });
+
+        const channels = getScopedChannels();
+        document.getElementById('channels-count-badge').textContent = `${channels.length} Connected`;
+        const cList = document.getElementById('connected-accounts-list');
+        cList.innerHTML = '';
+        channels.forEach(ch => {
+          const row = document.createElement('div');
+          row.className = 'p-3.5 rounded-xl bg-[#FAF9F6] border border-slate-200/80 flex items-center justify-between gap-3';
+          row.innerHTML = `
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-[#0F172A]">${esc(ch.platform)}</span>
+                <span class="text-xs text-slate-500">· ${esc(getWorkspaceName(ch.workspaceId))}</span>
+              </div>
+              <div class="text-xs font-semibold text-emerald-800 truncate mt-0.5">${esc(ch.handle)}</div>
+            </div>
+            <a href="${esc(ch.url)}" target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors">${esc(ch.studio)} ↗</a>
+          `;
+          cList.appendChild(row);
+        });
+      }
+
+      // ===================================================================
+      // RENDER: NOTIFICATIONS BELL
+      // ===================================================================
+      function renderNotifications() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const myNotifs = state.notifications.filter(n => n.forRole === user.role);
+        const unread = myNotifs.filter(n => !n.read).length;
+
+        document.getElementById('bell-dot').classList.toggle('hidden', unread === 0);
+
+        const list = document.getElementById('bell-list');
+        list.innerHTML = '';
+        if (myNotifs.length === 0) {
+          list.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No notifications yet.</div>`;
+        } else {
+          myNotifs.slice(0, 8).forEach(n => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors ${n.read ? 'opacity-65' : 'bg-[#2ED3A8]/10'}`;
+            btn.innerHTML = `
+              <div class="flex items-center justify-between gap-2 mb-0.5">
+                <span class="text-xs font-bold text-[#0F172A]">${esc(n.title)}</span>
+                <span class="font-mono text-[10px] text-slate-400 shrink-0">${esc(n.time)}</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-snug">${esc(n.body)}</p>
+            `;
+            btn.addEventListener('click', () => {
+              n.read = true;
+              saveState();
+              document.getElementById('bell-dropdown').classList.add('hidden');
+              renderNotifications();
+              if (n.postId) openDrawer(n.postId);
+            });
+            list.appendChild(btn);
+          });
+        }
+      }
+
+      // ===================================================================
+      // RENDER: LIVE SYNC & DRIVE SETTINGS (RYAN ONLY)
+      // ===================================================================
+      function renderSyncSettings() {
+        document.getElementById('set-apps-script-url').value = state.settings.appsScriptUrl || '';
+        document.getElementById('set-ryan-email').value = state.settings.ryanEmail || 'ryan@usechairlift.com';
+        document.getElementById('set-emilie-email').value = state.settings.emilieEmail || 'emilie@usechairlift.com';
+        document.getElementById('set-sheet-link').value = state.settings.sheetUrl || '';
+        document.getElementById('set-drive-01').value = state.settings.drive01Url || '';
+        document.getElementById('set-drive-02').value = state.settings.drive02Url || '';
+        document.getElementById('set-drive-03').value = state.settings.drive03Url || '';
+        document.getElementById('set-drive-04').value = state.settings.drive04Url || '';
+        document.getElementById('gas-code-preview').textContent = APPS_SCRIPT_CODE;
+
+        const wsList = document.getElementById('settings-workspaces-list');
+        wsList.innerHTML = '';
+        state.workspaces.forEach(ws => {
+          const count = state.posts.filter(p => p.workspaceId === ws.id).length;
+          const div = document.createElement('div');
+          div.className = 'p-3 rounded-xl bg-[#FAF9F6] border border-slate-200/80 flex items-center justify-between';
+          div.innerHTML = `
+            <div>
+              <div class="text-xs font-bold text-[#0F172A]">${esc(ws.name)}</div>
+              <div class="text-[11px] text-slate-500">${esc(ws.industry)}</div>
+            </div>
+            <span class="font-mono text-xs font-semibold text-emerald-800">${count} posts</span>
+          `;
+          wsList.appendChild(div);
+        });
+      }
+
+      // ===================================================================
+      // SLIDE-OVER COMPOSER & REVIEW DRAWER
+      // ===================================================================
+      function updateLivePreview() {
+        const wsId = document.getElementById('comp-workspace').value;
+        const wsName = getWorkspaceName(wsId);
+        const plat = document.getElementById('comp-platform').value;
+        const time = document.getElementById('comp-time').value || '10:00';
+        const caption = document.getElementById('comp-caption').value.trim();
+        const driveUrl = document.getElementById('comp-drive-url').value.trim();
+
+        document.getElementById('prev-workspace').textContent = wsName;
+        document.getElementById('prev-avatar').textContent = wsName.charAt(0).toUpperCase();
+        document.getElementById('prev-platform').textContent = plat;
+        document.getElementById('prev-time').textContent = time;
+        document.getElementById('prev-caption').textContent = caption || 'Your caption preview will appear here...';
+        document.getElementById('comp-char-count').textContent = `${caption.length} chars`;
+
+        const driveOpen = document.getElementById('comp-drive-open');
+        if (driveUrl) {
+          driveOpen.href = driveUrl;
+          driveOpen.classList.remove('hidden');
+        } else {
+          driveOpen.classList.add('hidden');
+        }
+
+        const img = document.getElementById('prev-img');
+        const ph = document.getElementById('prev-placeholder');
+        if (draftMediaData) {
+          img.src = draftMediaData;
+          img.classList.remove('hidden');
+          ph.classList.add('hidden');
+        } else {
+          img.classList.add('hidden');
+          ph.classList.remove('hidden');
+          document.getElementById('prev-ratio-tag').textContent = `${draftRatio} Visual Frame`;
+        }
+
+        document.querySelectorAll('.ratio-btn').forEach(b => {
+          const active = b.dataset.ratio === draftRatio;
+          b.className = active
+            ? 'ratio-btn font-mono text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-[#0F172A] text-[#2ED3A8]'
+            : 'ratio-btn font-mono text-[11px] px-2.5 py-0.5 rounded-lg bg-[#FAF9F6] border border-slate-200 text-slate-600';
+        });
+      }
+
+      function openDrawer(postId, prefillDate, prefillData) {
+        const user = getCurrentUser();
+        if (!user) return;
+        const isApprover = user.role === 'approver';
+
+        const wsSel = document.getElementById('comp-workspace');
+        wsSel.innerHTML = '';
+        state.workspaces.forEach(ws => {
+          const opt = document.createElement('option');
+          opt.value = ws.id;
+          opt.textContent = ws.name;
+          wsSel.appendChild(opt);
+        });
+
+        const post = postId ? state.posts.find(p => p.id === postId) : null;
+        document.getElementById('comp-id').value = post ? post.id : '';
+        document.getElementById('comp-workspace').value = post
+          ? post.workspaceId
+          : (prefillData && prefillData.workspaceId) || (state.activeWorkspace !== 'all' ? state.activeWorkspace : state.workspaces[0].id);
+        document.getElementById('comp-platform').value = post ? post.platform : 'Instagram Reels';
+        document.getElementById('comp-title').value = post ? post.title : ((prefillData && prefillData.title) || '');
+        document.getElementById('comp-date').value = post ? post.date : (prefillDate || relDate(1));
+        document.getElementById('comp-time').value = post ? post.time : '10:00';
+        document.getElementById('comp-drive-url').value = post ? (post.driveUrl || '') : ((prefillData && prefillData.driveUrl) || '');
+        document.getElementById('comp-caption').value = post ? post.caption : ((prefillData && prefillData.caption) || '');
+
+        draftMediaData = post ? (post.mediaData || '') : '';
+        draftRatio = post ? (post.ratio || '9:16') : '9:16';
+        document.getElementById('comp-media-label').textContent = draftMediaData ? 'Cover attached (click to replace)' : 'Attach cover image or frame preview (optional)';
+
+        document.getElementById('drawer-title').textContent = post ? (isApprover ? 'Review & Approve Post' : 'Edit Post') : 'New Post';
+        document.getElementById('drawer-status-pill').textContent = post ? post.status : 'Draft';
+
+        const fbBanner = document.getElementById('drawer-feedback-banner');
+        if (post && post.feedback) {
+          fbBanner.classList.remove('hidden');
+          document.getElementById('drawer-feedback-text').textContent = post.feedback;
+        } else {
+          fbBanner.classList.add('hidden');
+        }
+
+        const reviewBox = document.getElementById('ryan-review-box');
+        reviewBox.classList.toggle('hidden', !isApprover);
+        document.getElementById('ryan-feedback-input').value = post ? (post.feedback || '') : '';
+
+        // Role-based Footer Buttons
+        const footer = document.getElementById('drawer-footer');
+        if (isApprover) {
+          footer.innerHTML = `
+            <div class="flex items-center gap-2">
+              ${post ? `<button type="button" id="btn-delete-post" class="px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors">Delete</button>` : ''}
+              <button type="button" id="btn-request-edits" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200/80 text-amber-950 font-bold text-xs transition-colors">Request Edits</button>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn-save-ryan" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">Save</button>
+              <button type="button" id="btn-approve-post" class="px-4 py-2 rounded-xl bg-[#2ED3A8] hover:bg-[#24c298] text-[#0F172A] font-bold text-xs transition-colors">Approve &amp; Notify Emilie</button>
+            </div>
+          `;
+          const delBtn = document.getElementById('btn-delete-post');
+          if (delBtn) delBtn.addEventListener('click', () => deletePost(post.id));
+          document.getElementById('btn-request-edits').addEventListener('click', () => savePostFromDrawer('Needs Edits', true));
+          document.getElementById('btn-save-ryan').addEventListener('click', () => savePostFromDrawer(post ? post.status : 'Scheduled', false));
+          document.getElementById('btn-approve-post').addEventListener('click', () => savePostFromDrawer('Approved', true));
+        } else {
+          // Emilie (Coordinator): Cannot self-approve
+          footer.innerHTML = `
+            <div>
+              ${post && post.status === 'Approved' ? `<button type="button" id="btn-mark-scheduled" class="px-3.5 py-2 rounded-xl bg-sky-100 hover:bg-sky-200/80 text-sky-950 font-bold text-xs transition-colors">Mark as Scheduled</button>` : ''}
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn-save-draft" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">Save Draft</button>
+              <button type="button" id="btn-submit-approval" class="px-4 py-2 rounded-xl bg-[#2ED3A8] hover:bg-[#24c298] text-[#0F172A] font-bold text-xs transition-colors">Submit for Approval</button>
+            </div>
+          `;
+          const schedBtn = document.getElementById('btn-mark-scheduled');
+          if (schedBtn) schedBtn.addEventListener('click', () => savePostFromDrawer('Scheduled', false));
+          document.getElementById('btn-save-draft').addEventListener('click', () => savePostFromDrawer('Draft', false));
+          document.getElementById('btn-submit-approval').addEventListener('click', () => savePostFromDrawer('Pending Approval', true));
+        }
+
+        updateLivePreview();
+        const drawer = document.getElementById('post-drawer');
+        drawer.classList.remove('hidden');
+        requestAnimationFrame(() => drawer.classList.add('drawer-open'));
+      }
+
+      function closeDrawer() {
+        const drawer = document.getElementById('post-drawer');
+        drawer.classList.remove('drawer-open');
+        setTimeout(() => drawer.classList.add('hidden'), 260);
+      }
+
+      async function savePostFromDrawer(newStatus, shouldNotify) {
+        const user = getCurrentUser();
+        const id = document.getElementById('comp-id').value;
+        const title = document.getElementById('comp-title').value.trim();
+        const caption = document.getElementById('comp-caption').value.trim();
+        if (!title) {
+          showToast('Please enter a post title first');
+          return;
+        }
+
+        const existing = id ? state.posts.find(p => p.id === id) : null;
+        const feedback = user.role === 'approver'
+          ? document.getElementById('ryan-feedback-input').value.trim()
+          : (existing ? existing.feedback : '');
+
+        const payload = {
+          id: id || 'post-' + Date.now(),
+          workspaceId: document.getElementById('comp-workspace').value,
+          platform: document.getElementById('comp-platform').value,
+          title,
+          caption: caption || 'Caption pending.',
+          date: document.getElementById('comp-date').value || relDate(1),
+          time: document.getElementById('comp-time').value || '10:00',
+          status: newStatus,
+          ratio: draftRatio,
+          driveUrl: document.getElementById('comp-drive-url').value.trim(),
+          mediaData: draftMediaData,
+          feedback,
+          createdBy: existing ? existing.createdBy : user.name
+        };
+
+        if (existing) {
+          state.posts = state.posts.map(p => (p.id === id ? payload : p));
+        } else {
+          state.posts.unshift(payload);
+        }
+        saveState();
+        closeDrawer();
+        renderAll();
+
+        const wsName = getWorkspaceName(payload.workspaceId);
+        if (shouldNotify && user.role === 'coordinator' && newStatus === 'Pending Approval') {
+          await dispatchWorkflowNotification({
+            forRole: 'approver',
+            title: 'Submitted for approval',
+            body: `Emilie submitted "${payload.title}" (${wsName} · ${payload.platform}) for ${fmtDate(payload.date)} at ${payload.time}.`,
+            post: payload,
+            emailTo: state.settings.ryanEmail,
+            emailSubject: `[Chalet] Approval Requested: ${payload.title} (${wsName})`,
+            emailBody: `Hi Ryan,\n\nEmilie submitted a post for approval in Chalet:\n\nClient: ${wsName}\nPlatform: ${payload.platform}\nTitle: ${payload.title}\nTarget Slot: ${payload.date} at ${payload.time}\nDrive Asset: ${payload.driveUrl || 'Not attached'}\n\nCaption:\n${payload.caption}`,
+            toastMsg: 'Submitted for Ryan’s approval',
+            emailBtnLabel: 'Email Ryan'
+          });
+        } else if (shouldNotify && user.role === 'approver' && newStatus === 'Approved') {
+          await dispatchWorkflowNotification({
+            forRole: 'coordinator',
+            title: 'Approved by Ryan',
+            body: `"${payload.title}" (${wsName} · ${payload.platform}) is approved and ready to post.${feedback ? ' Note: ' + feedback : ''}`,
+            post: payload,
+            emailTo: state.settings.emilieEmail,
+            emailSubject: `[Chalet] Approved: ${payload.title} (${wsName})`,
+            emailBody: `Hi Emilie,\n\nRyan approved your post in Chalet — good to schedule:\n\nClient: ${wsName}\nPlatform: ${payload.platform}\nTitle: ${payload.title}\nSlot: ${payload.date} at ${payload.time}\n${feedback ? '\nNote from Ryan: ' + feedback : ''}`,
+            toastMsg: 'Approved & notified Emilie',
+            emailBtnLabel: 'Email Emilie'
+          });
+        } else if (shouldNotify && user.role === 'approver' && newStatus === 'Needs Edits') {
+          await dispatchWorkflowNotification({
+            forRole: 'coordinator',
+            title: 'Edits requested by Ryan',
+            body: `Ryan requested revisions on "${payload.title}".${feedback ? ' Feedback: ' + feedback : ''}`,
+            post: payload,
+            emailTo: state.settings.emilieEmail,
+            emailSubject: `[Chalet] Edits Requested: ${payload.title} (${wsName})`,
+            emailBody: `Hi Emilie,\n\nRyan requested edits on "${payload.title}" (${wsName} · ${payload.platform}):\n\nFeedback:\n${feedback || 'Please review the post in Chalet.'}`,
+            toastMsg: 'Edit request sent to Emilie',
+            emailBtnLabel: 'Email Feedback'
+          });
+        } else {
+          await pushToAppsScript(null);
+          showToast(`Saved (${newStatus})`);
+        }
+      }
+
+      async function deletePost(postId) {
+        state.posts = state.posts.filter(p => p.id !== postId);
+        saveState();
+        closeDrawer();
+        renderAll();
+        await pushToAppsScript(null);
+        showToast('Post removed');
+      }
+
+      // Mobile Sidebar Controls
+      function openMobileSidebar() {
+        document.getElementById('app-sidebar').classList.remove('-translate-x-full');
+        document.getElementById('mobile-sidebar-backdrop').classList.remove('hidden');
+      }
+      function closeMobileSidebar() {
+        document.getElementById('app-sidebar').classList.add('-translate-x-full');
+        document.getElementById('mobile-sidebar-backdrop').classList.add('hidden');
+      }
+
+      // ===================================================================
+      // EVENT LISTENERS
+      // ===================================================================
+      document.getElementById('quick-login-emilie').addEventListener('click', () => loginAs('emilie'));
+      document.getElementById('quick-login-ryan').addEventListener('click', () => loginAs('ryan'));
+
+      document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const pin = document.getElementById('login-pin').value.trim();
+        const match = Object.values(USERS).find(u => u.email === email && u.pin === pin);
+        if (match) {
+          loginAs(match.id);
+        } else {
+          const err = document.getElementById('login-error');
+          err.textContent = 'Invalid email or PIN. Try emilie@usechairlift.com (1234) or ryan@usechairlift.com (2026).';
+          err.classList.remove('hidden');
+        }
+      });
+
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      document.getElementById('mobile-role-chip').addEventListener('click', logout);
+
+      // Navigation (Desktop Sidebar + Mobile Bottom Nav)
+      document.querySelectorAll('.nav-item, .mob-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.nav));
+      });
+      document.getElementById('topbar-approvals-pill').addEventListener('click', () => switchView('approvals'));
+      document.getElementById('sync-status-pill').addEventListener('click', () => {
+        const user = getCurrentUser();
+        if (user && user.role === 'approver') switchView('sync');
+        else pullFromAppsScript(false);
+      });
+
+      // Mobile Sidebar
+      document.getElementById('open-mobile-sidebar').addEventListener('click', openMobileSidebar);
+      document.getElementById('close-mobile-sidebar').addEventListener('click', closeMobileSidebar);
+      document.getElementById('mobile-sidebar-backdrop').addEventListener('click', closeMobileSidebar);
+
+      // Workspace Selectors (Desktop + Mobile)
+      ['workspace-selector', 'mobile-workspace-selector'].forEach(id => {
+        document.getElementById(id).addEventListener('change', (e) => {
+          state.activeWorkspace = e.target.value;
+          saveState();
+          renderAll();
+        });
+      });
+
+      // Telemetry KPI Cards
+      document.querySelectorAll('.metric-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const metric = card.dataset.metric;
+          if (metric === 'channels') {
+            switchView('channels');
+          } else {
+            queueStatusFilter = metric;
+            switchView('queue');
+          }
+        });
+      });
+
+      // Queue Filters
+      document.querySelectorAll('.q-filter').forEach(btn => {
+        btn.addEventListener('click', () => {
+          queueStatusFilter = btn.dataset.status;
+          renderQueue();
+        });
+      });
+      document.getElementById('queue-platform-select').addEventListener('change', (e) => {
+        queuePlatformFilter = e.target.value;
+        renderQueue();
+      });
+      document.getElementById('queue-search').addEventListener('input', (e) => {
+        queueSearch = e.target.value;
+        renderQueue();
+      });
+
+      // Calendar Navigation
+      document.getElementById('cal-prev').addEventListener('click', () => { calMonday.setDate(calMonday.getDate() - 7); renderSchedule(); });
+      document.getElementById('cal-next').addEventListener('click', () => { calMonday.setDate(calMonday.getDate() + 7); renderSchedule(); });
+      document.getElementById('cal-today').addEventListener('click', () => { calMonday = getMonday(new Date()); renderSchedule(); });
+
+      // Raw Asset Intake Form
+      document.getElementById('intake-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const url = document.getElementById('intake-url').value.trim();
+        const workspaceId = document.getElementById('intake-workspace').value;
+        const tags = document.getElementById('intake-tags').value.trim();
+        if (!url) return;
+
+        const user = getCurrentUser();
+        state.intake.unshift({
+          id: 'in-' + Date.now(),
+          workspaceId,
+          url,
+          tags: tags || 'Queued clip',
+          status: 'Queued for Download',
+          driveUrl: state.settings.drive01Url || '',
+          addedBy: user ? user.name : 'Emilie'
+        });
+        saveState();
+        document.getElementById('intake-form').reset();
+        renderAll();
+        await pushToAppsScript(null);
+        showToast('Video URL added to Raw Asset Intake');
+      });
+
+      // Bell Dropdown
+      const bellBtn = document.getElementById('bell-btn');
+      const bellDrop = document.getElementById('bell-dropdown');
+      bellBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        bellDrop.classList.toggle('hidden');
+      });
+      document.addEventListener('click', (e) => {
+        if (!bellDrop.contains(e.target) && !bellBtn.contains(e.target)) bellDrop.classList.add('hidden');
+      });
+      document.getElementById('mark-all-read-btn').addEventListener('click', () => {
+        const user = getCurrentUser();
+        if (!user) return;
+        state.notifications.forEach(n => { if (n.forRole === user.role) n.read = true; });
+        saveState();
+        renderNotifications();
+      });
+
+      // Composer Drawer Controls
+      document.getElementById('open-composer-btn').addEventListener('click', () => openDrawer(null));
+      document.getElementById('close-drawer-btn').addEventListener('click', closeDrawer);
+      document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
+
+      ['comp-workspace', 'comp-platform', 'comp-time', 'comp-caption', 'comp-drive-url'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateLivePreview);
+        document.getElementById(id).addEventListener('change', updateLivePreview);
+      });
+
+      document.querySelectorAll('.ratio-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          draftRatio = btn.dataset.ratio;
+          updateLivePreview();
+        });
+      });
+
+      document.getElementById('comp-media-file').addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          draftMediaData = ev.target.result;
+          document.getElementById('comp-media-label').textContent = file.name;
+          updateLivePreview();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Add Client Modal (Ryan)
+      function openClientModal() {
+        document.getElementById('client-form').reset();
+        document.getElementById('client-modal').classList.remove('hidden');
+      }
+      function closeClientModal() {
+        document.getElementById('client-modal').classList.add('hidden');
+      }
+      document.getElementById('sidebar-add-client-btn').addEventListener('click', openClientModal);
+      document.getElementById('settings-add-client-btn').addEventListener('click', openClientModal);
+      document.getElementById('close-client-modal').addEventListener('click', closeClientModal);
+      document.getElementById('cancel-client-modal').addEventListener('click', closeClientModal);
+
+      document.getElementById('client-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('new-client-name').value.trim();
+        const industry = document.getElementById('new-client-industry').value.trim();
+        const newWs = { id: 'ws-' + Date.now(), name, industry };
+        state.workspaces.push(newWs);
+        state.activeWorkspace = newWs.id;
+        saveState();
+        closeClientModal();
+        renderAll();
+        showToast(`Workspace "${name}" created`);
+      });
+
+      // Sync & Drive Settings Form
+      document.getElementById('sync-settings-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        state.settings.appsScriptUrl = document.getElementById('set-apps-script-url').value.trim();
+        state.settings.ryanEmail = document.getElementById('set-ryan-email').value.trim();
+        state.settings.emilieEmail = document.getElementById('set-emilie-email').value.trim();
+        state.settings.sheetUrl = document.getElementById('set-sheet-link').value.trim() || 'https://docs.google.com/spreadsheets';
+        state.settings.drive01Url = document.getElementById('set-drive-01').value.trim() || 'https://drive.google.com';
+        state.settings.drive02Url = document.getElementById('set-drive-02').value.trim() || 'https://drive.google.com';
+        state.settings.drive03Url = document.getElementById('set-drive-03').value.trim() || 'https://drive.google.com';
+        state.settings.drive04Url = document.getElementById('set-drive-04').value.trim() || 'https://drive.google.com';
+        saveState();
+        renderAll();
+        if (state.settings.appsScriptUrl) {
+          await pullFromAppsScript(false);
+        } else {
+          updateSyncBadge('local', 'Local Mode');
+          showToast('Sync & Drive settings saved');
+        }
+      });
+
+      document.getElementById('manual-sync-btn').addEventListener('click', () => pullFromAppsScript(false));
+
+      // Copy Apps Script Code (Iframe-safe execCommand + Clipboard API fallback)
+      document.getElementById('copy-gas-btn').addEventListener('click', () => {
+        const ta = document.createElement('textarea');
+        ta.value = APPS_SCRIPT_CODE;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          showToast('Apps Script Code.gs copied to clipboard');
+        } catch (err) {
+          if (navigator.clipboard) navigator.clipboard.writeText(APPS_SCRIPT_CODE);
+          showToast('Apps Script Code.gs copied');
+        }
+        document.body.removeChild(ta);
+      });
+
+      document.getElementById('reset-demo-btn').addEventListener('click', () => {
+        const current = state.currentUser;
+        const savedSettings = state.settings;
+        state = createDefaultState();
+        state.currentUser = current;
+        state.settings = savedSettings;
+        saveState();
+        renderAll();
+        showToast('Sample data restored');
+      });
+
+      // Initial Boot
+      if (state.currentUser && USERS[state.currentUser]) {
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('app-shell').classList.remove('hidden');
+        document.getElementById('mobile-bottom-nav').classList.remove('hidden');
+        applyRoleUI();
+        switchView('queue');
+        pullFromAppsScript(true);
+      }
+    })();
+  </script>
+</body>
+</html>
